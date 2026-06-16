@@ -4,9 +4,11 @@ Globals:
     Timeout: 5
     MemorySize: 128
     Architectures:
-      - arm64
+      - x86_64
 
 Resources:
+  FileStoreS3:
+    Type: AWS::S3::Bucket
   HelloWorldFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -21,3 +23,25 @@ Resources:
           Properties:
             Path: /hello
             Method: GET
+  CreateFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Policies:
+        - S3CrudPolicy:
+            BucketName: !Ref FileStoreS3
+      CodeUri: cmd/api/create
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /create
+            Method: POST
+      Environment:
+        Variables:
+          FILESTORES3_BUCKET_NAME: !Ref FileStoreS3
+          FILESTORES3_BUCKET_ARN: !GetAtt FileStoreS3.Arn
+
