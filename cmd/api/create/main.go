@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/rand/v2"
 	"mime"
 	"mime/multipart"
 	"os"
@@ -83,6 +84,8 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 		return createResponse(400, err), nil
 	}
 
+	code := rand.IntN(1000000)
+
 	for {
 		part, err := form.NextPart()
 		if err == io.EOF {
@@ -106,7 +109,7 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 
 		_, err = client.PutObject(context, &s3.PutObjectInput{
 			Bucket: aws.String(os.Getenv("FILESTORES3_BUCKET_NAME")),
-			Key: &fileName,
+			Key: aws.String(fmt.Sprintf("%d/%s", code, fileName)),
 			Body: bytes.NewReader(data),
 			ContentLength: aws.Int64(int64(len(data))),
 		})
@@ -115,8 +118,7 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 			return createResponse(500, err), nil
 		}
 	}
-	
-	return createResponse(201, "Created"), nil
+	return createResponse(201, fmt.Sprint(code)), nil
 }
 
 func main() {
