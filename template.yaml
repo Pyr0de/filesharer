@@ -9,6 +9,20 @@ Globals:
 Resources:
   FileStoreS3:
     Type: AWS::S3::Bucket
+  MetadataStore:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: "code"
+          AttributeType: "N"
+        - AttributeName: "file"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "code"
+          KeyType: "HASH"
+        - AttributeName: "file"
+          KeyType: "RANGE"
   HelloWorldFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -29,8 +43,10 @@ Resources:
       BuildMethod: go1.x
     Properties:
       Policies:
-        - S3CrudPolicy:
+        - S3WritePolicy:
             BucketName: !Ref FileStoreS3
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MetadataStore
       CodeUri: cmd/api/create
       Handler: bootstrap
       Runtime: provided.al2023
@@ -43,5 +59,5 @@ Resources:
       Environment:
         Variables:
           FILESTORES3_BUCKET_NAME: !Ref FileStoreS3
-          FILESTORES3_BUCKET_ARN: !GetAtt FileStoreS3.Arn
+          METADATA_STORE_NAME: !Ref MetadataStore
 
