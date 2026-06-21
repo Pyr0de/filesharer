@@ -70,4 +70,3 @@ Resources:
           FILESTORES3_BUCKET_NAME: !Ref FileStoreS3
           METADATA_STORE_NAME: !Ref MetadataStore
           DATA_ENCRYPTION_NAME: !Ref DataEncryption
-

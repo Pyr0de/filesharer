@@ -13,7 +13,7 @@ import (
 
 type FileMetadata struct {
 	Code int    `dynamodbav:"code"`
-	Key  string `dynamodbav:"key"`
+	Key  []byte `dynamodbav:"key"`
 	File string `dynamodbav:"file"`
 }
 

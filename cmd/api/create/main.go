@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"filesharer-aws/cmd/utils"
 	"fmt"
 	"io"
@@ -31,6 +32,8 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 	if err != nil {
 		return utils.CreateResponse(500, err), nil
 	}
+
+
 
 	kmsClient, err := utils.ConnectDataEncryptionKMS(context)
 	if err != nil {
@@ -66,21 +69,40 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 			return utils.CreateResponse(400, "Could not read data"), nil
 		}
 
-		_, err = s3Client.Client.PutObject(context, &s3.PutObjectInput{
-			Bucket: s3Client.Id,
-			Key: aws.String(fmt.Sprintf("%s", fileName)),
-			Body: bytes.NewReader(data),
-			ContentLength: aws.Int64(int64(len(data))),
+		kmsOutput, err := kmsClient.Client.GenerateDataKey(context, &kms.GenerateDataKeyInput {
+			KeyId: kmsClient.Id,
+			KeySpec: types.DataKeySpecAes256,
 		})
-
 		if err != nil {
 			return utils.CreateResponse(500, err), nil
 		}
 
+		encryptedData, err := utils.Encrypt(kmsOutput.Plaintext, data)
+		if err != nil {
+			return utils.CreateResponse(500, err), nil
+		}
+
+		encryptedFileName, err := utils.Encrypt(kmsOutput.Plaintext, []byte(fileName))
+		if err != nil {
+			return utils.CreateResponse(500, err), nil
+		}
+		safeFileName := base64.RawURLEncoding.EncodeToString(encryptedFileName)
+
+		_, err = s3Client.Client.PutObject(context, &s3.PutObjectInput{
+			Bucket: s3Client.Id,
+			Key: aws.String(string(safeFileName)),
+			Body: bytes.NewReader(encryptedData),
+			ContentLength: aws.Int64(int64(len(encryptedData))),
+		})
+
+		if err != nil {
+			return utils.CreateResponse(500, fmt.Sprint(err, string(encryptedFileName))), nil
+		}
+
 		metadata := utils.FileMetadata {
 			Code: code,
-			Key: "",
-			File: fileName,
+			Key: kmsOutput.CiphertextBlob,
+			File: safeFileName,
 		}
 
 		item, err := attributevalue.MarshalMap(metadata)
@@ -98,15 +120,7 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 		
 	}
 
-	a, err := kmsClient.Client.GenerateDataKey(context, &kms.GenerateDataKeyInput {
-		KeyId: kmsClient.Id,
-		KeySpec: types.DataKeySpecAes256,
-	})
-	if err != nil {
-		return utils.CreateResponse(500, err), nil
-	}
-
-	return utils.CreateResponse(201, fmt.Sprint(code, a.Plaintext, a.CiphertextBlob, a.CiphertextForRecipient)), nil
+	return utils.CreateResponse(201, fmt.Sprint(code)), nil
 }
 
 func main() {
