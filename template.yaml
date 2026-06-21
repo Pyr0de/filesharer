@@ -70,3 +70,17 @@ Resources:
           FILESTORES3_BUCKET_NAME: !Ref FileStoreS3
           METADATA_STORE_NAME: !Ref MetadataStore
           DATA_ENCRYPTION_NAME: !Ref DataEncryption
+  GetFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      CodeUri: cmd/api/get
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /get/{id}
+            Method: GET
