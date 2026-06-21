@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/kms"
 )
 
 type FileMetadata struct {
@@ -23,6 +24,11 @@ type S3Client struct {
 
 type DynamoDBClient struct {
 	Client *dynamodb.Client
+	Id *string
+}
+
+type KMSClient struct {
+	Client *kms.Client
 	Id *string
 }
 
@@ -50,3 +56,14 @@ func ConnectMetadataStore(context context.Context) (*DynamoDBClient ,error) {
 	}, nil
 }
 
+func ConnectDataEncryptionKMS(context context.Context) (*KMSClient, error) {
+	cfg, err := config.LoadDefaultConfig(context)
+	if err != nil {
+		return nil, err
+	}
+
+	return &KMSClient{
+		Client: kms.NewFromConfig(cfg),
+		Id: aws.String(os.Getenv("DATA_ENCRYPTION_NAME")),
+	}, nil
+}

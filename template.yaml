@@ -7,6 +7,10 @@ Globals:
       - x86_64
 
 Resources:
+  DataEncryption:
+    Type: AWS::KMS::Key
+    Properties:
+      EnableKeyRotation: true
   FileStoreS3:
     Type: AWS::S3::Bucket
   MetadataStore:
@@ -47,6 +51,11 @@ Resources:
             BucketName: !Ref FileStoreS3
         - DynamoDBCrudPolicy:
             TableName: !Ref MetadataStore
+        - Statement:
+            - Effect: Allow
+              Action:
+                - kms:GenerateDataKey
+              Resource: !GetAtt DataEncryption.Arn
       CodeUri: cmd/api/create
       Handler: bootstrap
       Runtime: provided.al2023
@@ -60,4 +69,5 @@ Resources:
         Variables:
           FILESTORES3_BUCKET_NAME: !Ref FileStoreS3
           METADATA_STORE_NAME: !Ref MetadataStore
+          DATA_ENCRYPTION_NAME: !Ref DataEncryption
 

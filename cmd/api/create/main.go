@@ -13,6 +13,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/kms"
+	"github.com/aws/aws-sdk-go-v2/service/kms/types"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -26,6 +28,11 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 	}
 
 	metadataDb, err := utils.ConnectMetadataStore(context)
+	if err != nil {
+		return utils.CreateResponse(500, err), nil
+	}
+
+	kmsClient, err := utils.ConnectDataEncryptionKMS(context)
 	if err != nil {
 		return utils.CreateResponse(500, err), nil
 	}
@@ -90,7 +97,16 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 		}
 		
 	}
-	return utils.CreateResponse(201, fmt.Sprint(code)), nil
+
+	a, err := kmsClient.Client.GenerateDataKey(context, &kms.GenerateDataKeyInput {
+		KeyId: kmsClient.Id,
+		KeySpec: types.DataKeySpecAes256,
+	})
+	if err != nil {
+		return utils.CreateResponse(500, err), nil
+	}
+
+	return utils.CreateResponse(201, fmt.Sprint(code, a.Plaintext, a.CiphertextBlob, a.CiphertextForRecipient)), nil
 }
 
 func main() {
