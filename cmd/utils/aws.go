@@ -15,6 +15,7 @@ type FileMetadata struct {
 	Code int    `dynamodbav:"code"`
 	Key  []byte `dynamodbav:"key"`
 	File string `dynamodbav:"file"`
+	Size uint   `dynamodbav:"size"`
 }
 
 type S3Client struct {

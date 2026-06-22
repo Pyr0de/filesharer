@@ -103,6 +103,7 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 			Code: code,
 			Key: kmsOutput.CiphertextBlob,
 			File: safeFileName,
+			Size: uint(len(data)),
 		}
 
 		item, err := attributevalue.MarshalMap(metadata)
