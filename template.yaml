@@ -75,6 +75,9 @@ Resources:
     Metadata:
       BuildMethod: go1.x
     Properties:
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref MetadataStore
       CodeUri: cmd/api/get
       Handler: bootstrap
       Runtime: provided.al2023
@@ -84,3 +87,6 @@ Resources:
           Properties:
             Path: /get/{id}
             Method: GET
+      Environment:
+        Variables:
+          METADATA_STORE_NAME: !Ref MetadataStore
