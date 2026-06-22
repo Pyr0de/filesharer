@@ -78,6 +78,11 @@ Resources:
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref MetadataStore
+        - Statement:
+            - Effect: Allow
+              Action:
+                - kms:Decrypt
+              Resource: !GetAtt DataEncryption.Arn
       CodeUri: cmd/api/get
       Handler: bootstrap
       Runtime: provided.al2023
@@ -90,3 +95,4 @@ Resources:
       Environment:
         Variables:
           METADATA_STORE_NAME: !Ref MetadataStore
+          DATA_ENCRYPTION_NAME: !Ref DataEncryption

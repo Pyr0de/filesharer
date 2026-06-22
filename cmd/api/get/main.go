@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"filesharer-aws/cmd/utils"
 	"regexp"
 	"strings"
@@ -12,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/aws/aws-sdk-go-v2/service/kms"
 )
 
 func Handler(context context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -23,6 +25,11 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 	}
 
 	metadataStore, err := utils.ConnectMetadataStore(context)
+	if err != nil {
+		return utils.CreateResponse(500, err), nil
+	}
+
+	kmsClient, err := utils.ConnectDataEncryptionKMS(context)
 	if err != nil {
 		return utils.CreateResponse(500, err), nil
 	}
@@ -52,7 +59,25 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 
 	files := []string {}
 	for _, item := range items {
-		files = append(files, item.File)
+		out, err := kmsClient.Client.Decrypt(context, &kms.DecryptInput{
+			KeyId: kmsClient.Id,
+			CiphertextBlob: item.Key,
+		})
+		if err != nil {
+			return utils.CreateResponse(500, err), nil
+		}
+
+		encryptedFileName, err := base64.RawURLEncoding.DecodeString(item.File)
+		if err != nil {
+			return utils.CreateResponse(500, err), nil
+		}
+
+		fileName, err := utils.Decrypt(out.Plaintext, encryptedFileName)
+		if err != nil {
+			return utils.CreateResponse(500, err), nil
+		}
+
+		files = append(files, string(fileName))
 	}
 
 	return utils.CreateResponse(200, strings.Join(files, "\n")), nil
