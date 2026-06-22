@@ -12,10 +12,10 @@ import (
 )
 
 type FileMetadata struct {
-	Code int    `dynamodbav:"code"`
-	Key  []byte `dynamodbav:"key"`
-	File string `dynamodbav:"file"`
-	Size uint   `dynamodbav:"size"`
+	Code int    `dynamodbav:"code" json:"-"`
+	Key  []byte `dynamodbav:"key" json:"-"`
+	File string `dynamodbav:"file" json:"file"`
+	Size uint   `dynamodbav:"size" json:"size"`
 }
 
 type S3Client struct {

@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"filesharer-aws/cmd/utils"
 	"regexp"
-	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -57,8 +57,7 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 		return utils.CreateResponse(500, err), nil
 	}
 
-	files := []string {}
-	for _, item := range items {
+	for i, item := range items {
 		out, err := kmsClient.Client.Decrypt(context, &kms.DecryptInput{
 			KeyId: kmsClient.Id,
 			CiphertextBlob: item.Key,
@@ -77,10 +76,19 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 			return utils.CreateResponse(500, err), nil
 		}
 
-		files = append(files, string(fileName))
+		items[i].File = string(fileName)
 	}
-
-	return utils.CreateResponse(200, strings.Join(files, "\n")), nil
+	outJson, err := json.Marshal(items)
+	if err != nil {
+		return utils.CreateResponse(500, err), nil
+	}
+	return events.APIGatewayProxyResponse{
+		Headers: map[string]string {
+			"Content-Type": "application/json",
+		},
+		Body: string(outJson),
+		StatusCode: 200,
+	}, nil
 }
 
 func main() {
