@@ -103,3 +103,17 @@ Resources:
         Variables:
           METADATA_STORE_NAME: !Ref MetadataStore
           DATA_ENCRYPTION_NAME: !Ref DataEncryption
+  GetFileFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      CodeUri: cmd/api/getFile
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /getFile/{id}/{file}
+            Method: GET
