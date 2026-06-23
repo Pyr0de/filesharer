@@ -7,6 +7,12 @@ Globals:
       - x86_64
 
 Resources:
+  BinaryApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      BinaryMediaTypes:
+        - multipart/form-data
   DataEncryption:
     Type: AWS::KMS::Key
     Properties:
@@ -63,6 +69,7 @@ Resources:
         CatchAll:
           Type: Api
           Properties:
+            RestApiId: !Ref BinaryApiGateway
             Path: /create
             Method: POST
       Environment:

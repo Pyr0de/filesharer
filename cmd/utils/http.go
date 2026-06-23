@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"mime"
@@ -22,6 +23,16 @@ func CreateResponse(status int, error_message any) events.APIGatewayProxyRespons
 }
 
 func CreateMultipart(request events.APIGatewayProxyRequest) (*multipart.Reader, error) {
+	body := request.Body
+
+	if request.IsBase64Encoded {
+		decodedBody, err := base64.StdEncoding.DecodeString(request.Body)
+		if err != nil {
+			return nil, fmt.Errorf("decode base64 body: %w", err)
+		}
+		body = string(decodedBody)
+	}
+
 	contentType, ok := request.Headers["content-type"];
 	if !ok {
 		return nil, errors.New("Content-Type not defined")
@@ -36,7 +47,7 @@ func CreateMultipart(request events.APIGatewayProxyRequest) (*multipart.Reader, 
 		return nil, errors.New("Expected Content-Type: mulitpart/form-data")
 	}
 
-	reader := multipart.NewReader(bytes.NewReader([]byte(request.Body)), params["boundary"])
+	reader := multipart.NewReader(bytes.NewReader([]byte(body)), params["boundary"])
 
 	return reader, nil
 }

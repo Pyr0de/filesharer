@@ -33,8 +33,6 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 		return utils.CreateResponse(500, err), nil
 	}
 
-
-
 	kmsClient, err := utils.ConnectDataEncryptionKMS(context)
 	if err != nil {
 		return utils.CreateResponse(500, err), nil
