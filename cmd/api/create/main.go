@@ -25,17 +25,17 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 	s3Client, err := utils.ConnectS3(context)
 	
 	if err != nil {
-		return utils.CreateResponse(500, err), nil
+		return events.APIGatewayProxyResponse{}, err
 	}
 
 	metadataDb, err := utils.ConnectMetadataStore(context)
 	if err != nil {
-		return utils.CreateResponse(500, err), nil
+		return events.APIGatewayProxyResponse{}, err
 	}
 
 	kmsClient, err := utils.ConnectDataEncryptionKMS(context)
 	if err != nil {
-		return utils.CreateResponse(500, err), nil
+		return events.APIGatewayProxyResponse{}, err
 	}
 
 	form, err := utils.CreateMultipart(request)
@@ -72,17 +72,17 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 			KeySpec: types.DataKeySpecAes256,
 		})
 		if err != nil {
-			return utils.CreateResponse(500, err), nil
+			return events.APIGatewayProxyResponse{}, err
 		}
 
 		encryptedData, err := utils.Encrypt(kmsOutput.Plaintext, data)
 		if err != nil {
-			return utils.CreateResponse(500, err), nil
+			return events.APIGatewayProxyResponse{}, err
 		}
 
 		encryptedFileName, err := utils.Encrypt(kmsOutput.Plaintext, []byte(fileName))
 		if err != nil {
-			return utils.CreateResponse(500, err), nil
+			return events.APIGatewayProxyResponse{}, err
 		}
 		safeFileName := base64.RawURLEncoding.EncodeToString(encryptedFileName)
 
@@ -92,9 +92,8 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 			Body: bytes.NewReader(encryptedData),
 			ContentLength: aws.Int64(int64(len(encryptedData))),
 		})
-
 		if err != nil {
-			return utils.CreateResponse(500, fmt.Sprint(err, string(encryptedFileName))), nil
+			return events.APIGatewayProxyResponse{}, err
 		}
 
 		metadata := utils.FileMetadata {
@@ -106,7 +105,7 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 
 		item, err := attributevalue.MarshalMap(metadata)
 		if err != nil {
-			return utils.CreateResponse(500, err), nil
+			return events.APIGatewayProxyResponse{}, err
 		}
 		
 		_, err = metadataDb.Client.PutItem(context, &dynamodb.PutItemInput{
@@ -114,7 +113,7 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 			Item: item,
 		})
 		if err != nil {
-			return utils.CreateResponse(500, err), nil
+			return events.APIGatewayProxyResponse{}, err
 		}
 		
 	}
