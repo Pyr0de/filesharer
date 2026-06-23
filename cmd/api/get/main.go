@@ -26,12 +26,12 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 
 	metadataStore, err := utils.ConnectMetadataStore(context)
 	if err != nil {
-		return utils.CreateResponse(500, err), nil
+		return events.APIGatewayProxyResponse{}, err
 	}
 
 	kmsClient, err := utils.ConnectDataEncryptionKMS(context)
 	if err != nil {
-		return utils.CreateResponse(500, err), nil
+		return events.APIGatewayProxyResponse{}, err
 	}
 
 	result, err := metadataStore.Client.Query(context, &dynamodb.QueryInput{
@@ -47,14 +47,14 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 		},
 	})
 	if err != nil {
-		return utils.CreateResponse(500, err), nil
+		return events.APIGatewayProxyResponse{}, err
 	}
 
 	var items []utils.FileMetadata;
 
 	err = attributevalue.UnmarshalListOfMaps(result.Items, &items)
 	if err != nil {
-		return utils.CreateResponse(500, err), nil
+		return events.APIGatewayProxyResponse{}, err
 	}
 
 	for i, item := range items {
@@ -63,24 +63,24 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 			CiphertextBlob: item.Key,
 		})
 		if err != nil {
-			return utils.CreateResponse(500, err), nil
+			return events.APIGatewayProxyResponse{}, err
 		}
 
 		encryptedFileName, err := base64.RawURLEncoding.DecodeString(item.File)
 		if err != nil {
-			return utils.CreateResponse(500, err), nil
+			return events.APIGatewayProxyResponse{}, err
 		}
 
 		fileName, err := utils.Decrypt(out.Plaintext, encryptedFileName)
 		if err != nil {
-			return utils.CreateResponse(500, err), nil
+			return events.APIGatewayProxyResponse{}, err
 		}
 
 		items[i].File = string(fileName)
 	}
 	outJson, err := json.Marshal(items)
 	if err != nil {
-		return utils.CreateResponse(500, err), nil
+		return events.APIGatewayProxyResponse{}, err
 	}
 	return events.APIGatewayProxyResponse{
 		Headers: map[string]string {
