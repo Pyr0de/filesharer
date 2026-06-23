@@ -44,7 +44,7 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 		return utils.CreateResponse(400, err), nil
 	}
 
-	code := rand.IntN(1000000)
+	code := rand.IntN(900000) + 100000
 
 	for {
 		part, err := form.NextPart()
