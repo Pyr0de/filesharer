@@ -7,12 +7,6 @@ Globals:
       - x86_64
 
 Resources:
-  BinaryApiGateway:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
-      BinaryMediaTypes:
-        - multipart/form-data
   DataEncryption:
     Type: AWS::KMS::Key
     Properties:
@@ -55,13 +49,6 @@ Resources:
       Policies:
         - S3WritePolicy:
             BucketName: !Ref FileStoreS3
-        - DynamoDBCrudPolicy:
-            TableName: !Ref MetadataStore
-        - Statement:
-            - Effect: Allow
-              Action:
-                - kms:GenerateDataKey
-              Resource: !GetAtt DataEncryption.Arn
       CodeUri: cmd/api/create
       Handler: bootstrap
       Runtime: provided.al2023
@@ -69,14 +56,11 @@ Resources:
         CatchAll:
           Type: Api
           Properties:
-            RestApiId: !Ref BinaryApiGateway
             Path: /create
             Method: POST
       Environment:
         Variables:
           FILESTORES3_BUCKET_NAME: !Ref FileStoreS3
-          METADATA_STORE_NAME: !Ref MetadataStore
-          DATA_ENCRYPTION_NAME: !Ref DataEncryption
   GetFunction:
     Type: AWS::Serverless::Function
     Metadata:

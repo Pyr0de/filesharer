@@ -20,6 +20,7 @@ type FileMetadata struct {
 
 type S3Client struct {
 	Client *s3.Client
+	PresignClient *s3.PresignClient
 	Id *string
 }
 
@@ -39,9 +40,26 @@ func ConnectS3(context context.Context) (*S3Client, error){
 		return nil, err
 	}
 
+	client := s3.NewFromConfig(cfg)
+
 	return &S3Client{
-		Client: s3.NewFromConfig(cfg),
+		Client: client,
+		PresignClient: s3.NewPresignClient(client),
 		Id: aws.String(os.Getenv("FILESTORES3_BUCKET_NAME")),
+	}, nil
+}
+func ConnectTempS3(context context.Context) (*S3Client, error){
+	cfg, err := config.LoadDefaultConfig(context)
+	if err != nil {
+		return nil, err
+	}
+
+	client := s3.NewFromConfig(cfg)
+
+	return &S3Client{
+		Client: client,
+		PresignClient: s3.NewPresignClient(client),
+		Id: aws.String(os.Getenv("TEMPFILESTORES3_BUCKET_NAME")),
 	}, nil
 }
 
