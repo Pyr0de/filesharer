@@ -2,13 +2,15 @@ package utils
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 type FileMetadata struct {
@@ -34,7 +36,21 @@ type KMSClient struct {
 	Id *string
 }
 
+func getEnv(env_name string) (*string, error) {
+	name := os.Getenv(env_name)
+	if name == "" {
+		return nil, errors.New(fmt.Sprintf("Environment variable '%s' not defined", env_name))
+	}
+	return aws.String(name), nil
+}
+
 func ConnectS3(context context.Context) (*S3Client, error){
+	env_name := "FILESTORES3_BUCKET_NAME"
+	name, err := getEnv(env_name)
+	if err != nil {
+		return nil, err
+	}
+
 	cfg, err := config.LoadDefaultConfig(context)
 	if err != nil {
 		return nil, err
@@ -45,10 +61,16 @@ func ConnectS3(context context.Context) (*S3Client, error){
 	return &S3Client{
 		Client: client,
 		PresignClient: s3.NewPresignClient(client),
-		Id: aws.String(os.Getenv("FILESTORES3_BUCKET_NAME")),
+		Id: name,
 	}, nil
 }
 func ConnectTempS3(context context.Context) (*S3Client, error){
+	env_name := "TEMPFILESTORES3_BUCKET_NAME"
+	name, err := getEnv(env_name)
+	if err != nil {
+		return nil, err
+	}
+
 	cfg, err := config.LoadDefaultConfig(context)
 	if err != nil {
 		return nil, err
@@ -59,11 +81,16 @@ func ConnectTempS3(context context.Context) (*S3Client, error){
 	return &S3Client{
 		Client: client,
 		PresignClient: s3.NewPresignClient(client),
-		Id: aws.String(os.Getenv("TEMPFILESTORES3_BUCKET_NAME")),
+		Id: name,
 	}, nil
 }
 
 func ConnectMetadataStore(context context.Context) (*DynamoDBClient ,error) {
+	env_name := "METADATA_STORE_NAME"
+	name, err := getEnv(env_name)
+	if err != nil {
+		return nil, err
+	}
 	cfg, err := config.LoadDefaultConfig(context)
 	if err != nil {
 		return nil, err
@@ -71,11 +98,16 @@ func ConnectMetadataStore(context context.Context) (*DynamoDBClient ,error) {
 
 	return &DynamoDBClient{
 		Client: dynamodb.NewFromConfig(cfg),
-		Id: aws.String(os.Getenv("METADATA_STORE_NAME")),
+		Id: name,
 	}, nil
 }
 
 func ConnectDataEncryptionKMS(context context.Context) (*KMSClient, error) {
+	env_name := "DATA_ENCRYPTION_NAME"
+	name, err := getEnv(env_name)
+	if err != nil {
+		return nil, err
+	}
 	cfg, err := config.LoadDefaultConfig(context)
 	if err != nil {
 		return nil, err
@@ -83,6 +115,6 @@ func ConnectDataEncryptionKMS(context context.Context) (*KMSClient, error) {
 
 	return &KMSClient{
 		Client: kms.NewFromConfig(cfg),
-		Id: aws.String(os.Getenv("DATA_ENCRYPTION_NAME")),
+		Id: name,
 	}, nil
 }
