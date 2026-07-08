@@ -49,13 +49,8 @@ Resources:
       BuildMethod: go1.x
     Properties:
       Policies:
-        - DynamoDBReadPolicy:
-            TableName: !Ref MetadataStore
-        - Statement:
-            - Effect: Allow
-              Action:
-                - kms:Decrypt
-              Resource: !GetAtt DataEncryption.Arn
+        - S3ReadPolicy:
+            BucketName: !Ref FileStoreS3
       CodeUri: cmd/api/get
       Handler: bootstrap
       Runtime: provided.al2023
@@ -65,6 +60,9 @@ Resources:
           Properties:
             Path: /get/{id}
             Method: GET
+      Environment:
+        Variables:
+          FILESTORES3_BUCKET_NAME: !Ref FileStoreS3
   GetFileFunction:
     Type: AWS::Serverless::Function
     Metadata:

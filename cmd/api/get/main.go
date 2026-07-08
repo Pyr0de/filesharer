@@ -2,18 +2,13 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
-	"encoding/json"
 	"filesharer-aws/cmd/utils"
 	"regexp"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/aws/aws-sdk-go-v2/service/kms"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 func Handler(context context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -24,71 +19,17 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 		return utils.CreateResponse(400, "Invalid fileshare id"), nil
 	}
 
-	metadataStore, err := utils.ConnectMetadataStore(context)
-	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
-	}
+    s3client, err := utils.ConnectS3(context)
+    if err != nil {
+        return events.APIGatewayProxyResponse{}, err
+    }
 
-	kmsClient, err := utils.ConnectDataEncryptionKMS(context)
-	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
-	}
+    url, err := s3client.PresignClient.PresignGetObject(context, &s3.GetObjectInput{
+        Bucket: s3client.Id,
+        Key: aws.String(id),
+    })
 
-	result, err := metadataStore.Client.Query(context, &dynamodb.QueryInput{
-		TableName: metadataStore.Id,
-		KeyConditionExpression: aws.String("#c = :code"),
-		ExpressionAttributeNames: map[string]string{
-			"#c": "code",
-		},
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":code": &types.AttributeValueMemberN{
-				Value: id,
-			},
-		},
-	})
-	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
-	}
-
-	var items []utils.FileMetadata;
-
-	err = attributevalue.UnmarshalListOfMaps(result.Items, &items)
-	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
-	}
-
-	for i, item := range items {
-		out, err := kmsClient.Client.Decrypt(context, &kms.DecryptInput{
-			KeyId: kmsClient.Id,
-			CiphertextBlob: item.Key,
-		})
-		if err != nil {
-			return events.APIGatewayProxyResponse{}, err
-		}
-
-		encryptedFileName, err := base64.RawURLEncoding.DecodeString(item.File)
-		if err != nil {
-			return events.APIGatewayProxyResponse{}, err
-		}
-
-		fileName, err := utils.Decrypt(out.Plaintext, encryptedFileName)
-		if err != nil {
-			return events.APIGatewayProxyResponse{}, err
-		}
-
-		items[i].File = string(fileName)
-	}
-	outJson, err := json.Marshal(items)
-	if err != nil {
-		return events.APIGatewayProxyResponse{}, err
-	}
-	return events.APIGatewayProxyResponse{
-		Headers: map[string]string {
-			"Content-Type": "application/json",
-		},
-		Body: string(outJson),
-		StatusCode: 200,
-	}, nil
+	return utils.CreateResponse(200, url.URL), nil
 }
 
 func main() {
