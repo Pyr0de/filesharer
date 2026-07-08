@@ -63,17 +63,3 @@ Resources:
       Environment:
         Variables:
           FILESTORES3_BUCKET_NAME: !Ref FileStoreS3
-  GetFileFunction:
-    Type: AWS::Serverless::Function
-    Metadata:
-      BuildMethod: go1.x
-    Properties:
-      CodeUri: cmd/api/getFile
-      Handler: bootstrap
-      Runtime: provided.al2023
-      Events:
-        CatchAll:
-          Type: Api
-          Properties:
-            Path: /getFile/{id}/{file}
-            Method: GET
