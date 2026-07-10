@@ -9,6 +9,11 @@ Globals:
 Resources:
   FileStoreS3:
     Type: AWS::S3::Bucket
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+          - Status: Enabled
+            ExpirationInDays: 7
   HelloWorldFunction:
     Type: AWS::Serverless::Function
     Metadata:
