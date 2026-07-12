@@ -4,7 +4,7 @@ Globals:
     Timeout: 5
     MemorySize: 128
     Architectures:
-      - x86_64
+      - arm64
 
 Resources:
   FileStoreS3:
@@ -68,3 +68,9 @@ Resources:
       Environment:
         Variables:
           FILESTORES3_BUCKET_NAME: !Ref FileStoreS3
+
+Outputs:
+  ApiUrl:
+    Description: API URL
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+
