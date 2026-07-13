@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { bytesToLargestUnit } from "../utils/utils";
 
 interface FileDisplayProps {
     files: File[]
@@ -55,7 +56,7 @@ export const FileDisplay = ({ files, button }: FileDisplayProps) => {
                 color: "#666",
             }}
             >
-            {(file.size / 1024).toFixed(2)} KB
+            {bytesToLargestUnit(file.size)}
             </span>
             <div>
             {button(index)}
