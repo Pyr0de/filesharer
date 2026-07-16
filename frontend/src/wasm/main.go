@@ -40,6 +40,11 @@ func createTarball(files []File) []byte {
 			log.Fatal("Error: Write Body ", err)
 		}
 	}
+	
+	if err := t.Close(); err != nil {
+		log.Fatal(err)
+	}
+
 	return buf.Bytes()
 }
 
