@@ -5,7 +5,6 @@ package main
 import (
 	"archive/tar"
 	"bytes"
-	"fmt"
 	"log"
 	"syscall/js"
 )
@@ -16,12 +15,28 @@ type File struct {
 	Body []byte
 }
 
-func ObjectToFile(file js.Value) File {
-	return File{
-		Name: file.Get("name").String(),
-		Size: int64(file.Get("size").Int()),
-		Body: []byte("asd"),
-	}
+func ObjectToFile(file js.Value, callback func(File)) {
+	then := js.FuncOf(func(this js.Value, args []js.Value) any {
+		uint8Array := args[0]
+
+		buf := make([]byte, uint8Array.Get("length").Int())
+		js.CopyBytesToGo(buf, uint8Array)
+
+		callback(File{
+			Name: file.Get("name").String(),
+			Size: int64(file.Get("size").Int()),
+			Body: buf,
+		})
+		return nil
+	})
+
+	catch := js.FuncOf(func(this js.Value, args []js.Value) any {
+		log.Fatal(args[0])
+		return nil
+	})
+
+	file.Call("bytes").Call("then", then).Call("catch", catch)
+
 }
 
 func addFileToTarball(t *tar.Writer, file File) {
@@ -50,28 +65,32 @@ func createTarballHelper(this js.Value, args []js.Value) any {
 
 		var buf bytes.Buffer
 		t := tar.NewWriter(&buf)
+		closeTarFile := func() {
+			if err := t.Close(); err != nil {
+				log.Fatal(err)
+			}
+			bytes := buf.Bytes()
+			uint8Array := js.Global().Get("Uint8Array").New(len(bytes))
+			js.CopyBytesToJS(uint8Array, bytes)
+
+			resolve.Invoke(uint8Array)
+		}
 
 		remaining_files := files_js.Length()
+		addFileCallback := func(file File) {
+			addFileToTarball(t, file)
+
+			remaining_files -= 1
+			if remaining_files <= 0 {
+				closeTarFile()
+			}
+		}
+
 		for i := 0; i < files_js.Length(); i++ {
 			go func() {
 				file_js := files_js.Index(i)
-				fmt.Println(i, file_js)
-				file := ObjectToFile(file_js)
 
-				addFileToTarball(t, file)
-
-				remaining_files -= 1
-
-				if remaining_files <= 0 {
-					if err := t.Close(); err != nil {
-						log.Fatal(err)
-					}
-					bytes := buf.Bytes()
-					uint8Array := js.Global().Get("Uint8Array").New(len(bytes))
-					js.CopyBytesToJS(uint8Array, bytes)
-
-					resolve.Invoke(uint8Array)
-				}
+				ObjectToFile(file_js, addFileCallback)
 			}()
 		}
 
