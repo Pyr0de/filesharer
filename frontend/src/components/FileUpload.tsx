@@ -31,6 +31,19 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
         }, 0))
         setFiles(newFiles);
     };
+
+    const uploadFiles = async () => {
+        const data = createTarball(files)
+
+        var fileName = "archive.tar";
+        var blob = new Blob([data.buffer as ArrayBuffer], {type: "application/x-tar"});
+
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+    }
+
     return (
         <div>
         <input
@@ -58,6 +71,7 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
             }
         }
         />
+        <button onClick={() => uploadFiles()}>Done</button>
         </div>
     );
 }

@@ -2,6 +2,9 @@ declare class Go {
   importObject: WebAssembly.Imports;
   run(instance: WebAssembly.Instance): Promise<void>;
 }
+declare global {
+    function createTarball(files: File[]): Uint8Array
+}
 
 export async function initWasm() {
     const go = new Go();
