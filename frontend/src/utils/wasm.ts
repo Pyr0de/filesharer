@@ -3,7 +3,7 @@ declare class Go {
   run(instance: WebAssembly.Instance): Promise<void>;
 }
 declare global {
-    function createTarball(files: File[]): Uint8Array
+    function createTarball(files: File[]): Promise<Uint8Array>
 }
 
 export async function initWasm() {

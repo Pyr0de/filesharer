@@ -33,7 +33,7 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
     };
 
     const uploadFiles = async () => {
-        const data = createTarball(files)
+        const data = await createTarball(files)
 
         var fileName = "archive.tar";
         var blob = new Blob([data.buffer as ArrayBuffer], {type: "application/x-tar"});
