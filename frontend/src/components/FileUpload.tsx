@@ -35,7 +35,7 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
     const uploadFiles = async () => {
         const data = await createTarball(files)
 
-        var fileName = "archive.tar";
+        var fileName = "archive.tar.gz";
         var blob = new Blob([data.buffer as ArrayBuffer], {type: "application/x-tar"});
 
         var link = document.createElement('a');

@@ -5,6 +5,7 @@ package main
 import (
 	"archive/tar"
 	"bytes"
+	"compress/gzip"
 	"log"
 	"syscall/js"
 )
@@ -64,9 +65,13 @@ func createTarballHelper(this js.Value, args []js.Value) any {
 		resolve := args[0]
 
 		var buf bytes.Buffer
-		t := tar.NewWriter(&buf)
+		g := gzip.NewWriter(&buf)
+		t := tar.NewWriter(g)
 		closeTarFile := func() {
 			if err := t.Close(); err != nil {
+				log.Fatal(err)
+			}
+			if err := g.Close(); err != nil {
 				log.Fatal(err)
 			}
 			bytes := buf.Bytes()
