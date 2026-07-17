@@ -1,6 +1,7 @@
 import { type ChangeEvent, useState, useEffect } from "react";
 import { FileDisplay } from "./FileDisplay";
 import { createFileshare, uploadFile } from "../services/api";
+import { bytesToLargestUnit } from "../utils/utils";
 
 interface FileUploaderProps {
     onSizeChange: (size: number) => void
@@ -9,6 +10,7 @@ interface FileUploaderProps {
 export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
     const [files, setFiles] = useState<File[]>([]);
     const [code, setCode] = useState<number>(0);
+    const [status, setStatus] = useState("Ready")
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -35,16 +37,22 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
     }, [files])
 
     const uploadFiles = async () => {
-        const data = await createTarball(files)
-        const fileshare_info = await createFileshare()
+        setStatus("Processing")
+        const done = await Promise.all([createTarball(files), createFileshare()])
+        const data = done[0]
+        const fileshare_info = done[1]
+        
+        console.log(bytesToLargestUnit(data.length))
+        setStatus("Uploading")
 
-        uploadFile(fileshare_info.url, data)
+        uploadFile(fileshare_info.url, data).then(() => setStatus("Ready"))
         setFiles([])
         setCode(fileshare_info.code)
     }
 
     return (
         <div>
+        <p>{status}</p>
         {code != 0 && <p>Uploaded to ID: {code}</p>}
 
         <input
