@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"filesharer-aws/cmd/middleware"
 	"filesharer-aws/cmd/utils"
 	"regexp"
 
@@ -33,5 +34,5 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 }
 
 func main() {
-	lambda.Start(Handler)
+	lambda.Start(middleware.CorsMiddleware(Handler))
 }

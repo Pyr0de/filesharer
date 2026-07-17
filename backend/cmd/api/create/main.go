@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"filesharer-aws/cmd/middleware"
 	"filesharer-aws/cmd/utils"
 	"fmt"
 	"log"
@@ -56,6 +57,6 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
-	lambda.Start(Handler)
+	lambda.Start(middleware.CorsMiddleware(Handler))
 }
 

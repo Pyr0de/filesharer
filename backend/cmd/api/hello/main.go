@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"filesharer-aws/cmd/middleware"
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -8,7 +10,7 @@ import (
 )
 
 
-func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var greeting string
 	sourceIP := request.RequestContext.Identity.SourceIP
 
@@ -28,5 +30,5 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 }
 
 func main() {
-	lambda.Start(Handler)
+	lambda.Start(middleware.CorsMiddleware(Handler))
 }
