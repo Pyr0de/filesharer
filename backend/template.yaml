@@ -10,6 +10,16 @@ Resources:
   FileStoreS3:
     Type: AWS::S3::Bucket
     Properties:
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+            - "*"
+            AllowedMethods:
+            - GET
+            - PUT
+            AllowedHeaders:
+            - "*"
+            MaxAge: 3000
       LifecycleConfiguration:
         Rules:
           - Status: Enabled
