@@ -37,13 +37,26 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
     }, [files])
 
     const uploadFiles = async () => {
+
+        const tarballPromise: Promise<Uint8Array> = new Promise((res) => {
+            const worker = new Worker(
+                new URL("../services/tarballWorker.ts", import.meta.url),
+            );
+            worker.onmessage = (event: MessageEvent<Uint8Array>) => {
+                res(event.data)
+            }
+            worker.onerror = (e) => {
+                console.error(e)
+            }
+            worker.postMessage(files)
+        })
         setStatus("Processing")
-        const done = await Promise.all([createTarball(files), createFileshare()])
+        const done = await Promise.all([tarballPromise, createFileshare()])
+
         const data = done[0]
         const fileshare_info = done[1]
-        
-        console.log(bytesToLargestUnit(data.length))
-        setStatus("Uploading")
+
+        setStatus(`Uploading ${bytesToLargestUnit(data.length)}`)
 
         uploadFile(fileshare_info.url, data).then(() => setStatus("Ready"))
         setFiles([])
