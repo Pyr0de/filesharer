@@ -9,7 +9,7 @@ interface FileUploaderProps {
 
 export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
     const [files, setFiles] = useState<File[]>([]);
-    const [code, setCode] = useState<number>(0);
+    const [code, setCode] = useState("");
     const [status, setStatus] = useState("Ready")
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +37,9 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
     }, [files])
 
     const uploadFiles = async () => {
-
+        if (files.length < 1) {
+            return
+        }
         const tarballPromise: Promise<Uint8Array> = new Promise((res) => {
             const worker = new Worker(
                 new URL("../services/tarballWorker.ts", import.meta.url),
@@ -56,17 +58,17 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
         const data = done[0]
         const fileshare_info = done[1]
 
-        setStatus(`Uploading ${bytesToLargestUnit(data.length)}`)
+        setStatus(`Uploading`)
 
         uploadFile(fileshare_info.url, data).then(() => setStatus("Ready"))
         setFiles([])
-        setCode(fileshare_info.code)
+        setCode(`${fileshare_info.code} ${bytesToLargestUnit(data.length)}`)
     }
 
     return (
         <div>
         <p>{status}</p>
-        {code != 0 && <p>Uploaded to ID: {code}</p>}
+        {code != "" && <p>Uploaded to ID: {code}</p>}
 
         <input
         type="file"
