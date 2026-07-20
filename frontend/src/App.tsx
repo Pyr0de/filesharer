@@ -1,17 +1,19 @@
-import { useState } from 'react'
+import { HashRouter, Route, Routes } from 'react-router-dom'
 import './App.css'
-import { FileUploader } from './components/FileUpload'
-import { bytesToLargestUnit } from './utils/utils'
+import { HomePage } from './pages/Home'
+import { DownloadPage } from './pages/Download';
 
-function App() {
-    const [totalSize, setTotalSize] = useState(0)
-
+export default function App() {
+    if (!window.location.hash) {
+        window.location.replace(`/#${window.location.pathname}${window.location.search}`);
+    }
     return (
-        <>
-            <p>{bytesToLargestUnit(totalSize)}</p>
-            <FileUploader onSizeChange={setTotalSize}/>
-        </>
+        <HashRouter>
+        <Routes>
+            <Route path="/*" element={<p>404 Page not found</p>} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/download" element={<DownloadPage />} />
+            </Routes>
+        </HashRouter>
     )
 }
-
-export default App
