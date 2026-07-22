@@ -37,13 +37,17 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
     }
 
     useEffect(() => {
+        if (code == 0) {
+            return
+        }
+
         setStatus("Downloading...")
         downloadFile()
     }, [code])
 
     return (
         <>
-            {status != "" && <p>{status}</p>}
+            <p>{status}</p>
             <FileDisplay files={files} button={(index) => {
                 const url = URL.createObjectURL(files[index])
                 return (

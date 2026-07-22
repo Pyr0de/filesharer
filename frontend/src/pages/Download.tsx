@@ -7,7 +7,7 @@ export const DownloadPage = () => {
 
     return (
         <>
-        {code != 0 && <FileDownload code={code} />}
+        <FileDownload code={code} />
 
         <Search setCode={setCode} />
         </>
