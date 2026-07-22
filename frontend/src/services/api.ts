@@ -23,3 +23,20 @@ export async function uploadFile(url: string, file: Uint8Array): Promise<boolean
 
     return req.ok
 }
+
+export async function getFile(code: number): Promise<Uint8Array> {
+    const req = await fetch(`${API_URL}/get/${code}`)
+
+    if (!req.ok) {
+        throw new Error(`Error: ${req.status}\n${req.text}`)
+    }
+
+    const url = await req.text()
+
+    const s3_req = await fetch(url)
+    if (!s3_req.ok) {
+        throw new Error(`Error: ${req.status}\n${req.text}`)
+    }
+
+    return await s3_req.bytes()
+}
