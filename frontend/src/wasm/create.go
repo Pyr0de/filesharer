@@ -18,7 +18,6 @@ func ObjectToFile(file js.Value, callback func(File)) {
 
 		callback(File{
 			Name: file.Get("name").String(),
-			Size: int64(file.Get("size").Int()),
 			Body: buf,
 		})
 		return nil

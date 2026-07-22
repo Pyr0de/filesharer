@@ -8,7 +8,6 @@ import (
 
 type File struct {
 	Name string
-	Size int64
 	Body []byte
 }
 
