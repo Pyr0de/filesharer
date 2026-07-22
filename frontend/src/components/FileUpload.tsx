@@ -40,7 +40,7 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
         if (files.length < 1) {
             return
         }
-        const tarballPromise: Promise<Uint8Array> = new Promise((res) => {
+        const tarballPromise: Promise<Uint8Array> = new Promise((res, rej) => {
             const worker = new Worker(
                 new URL("../services/tarballWorker.ts", import.meta.url),
             );
@@ -48,7 +48,7 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
                 res(event.data)
             }
             worker.onerror = (e) => {
-                console.error(e)
+                rej(e)
             }
             worker.postMessage(files)
         })
