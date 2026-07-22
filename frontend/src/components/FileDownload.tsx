@@ -18,23 +18,39 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
             setStatus(`Could not get fileshare id: ${code}`)
             return
         }
+        setStatus("Processing...")
+        const tarballPromise: Promise<File[]> = new Promise((res, rej) => {
+            const worker = new Worker(
+                new URL("../services/tarballWorker.ts", import.meta.url),
+            );
+            worker.onmessage = (event: MessageEvent<File[]>) => {
+                res(event.data)
+            }
+            worker.onerror = (e) => {
+                rej(e)
+            }
+            worker.postMessage(data)
+        })
 
+        setFiles(await tarballPromise)
+        setStatus("Done")
     }
 
     useEffect(() => {
+        setStatus("Downloading...")
         downloadFile()
     }, [code])
-
-    const onDownload = (index: number) => {
-        // Download individual file
-        console.log(`Downloading ${index}`)
-    }
 
     return (
         <>
             {status != "" && <p>{status}</p>}
             <FileDisplay files={files} button={(index) => {
-                return <button onClick={() => onDownload(index)}>Download</button>
+                const url = URL.createObjectURL(files[index])
+                return (
+                    <a href={url} download={files[index].name}>
+                    <button>Download</button>
+                    </a>
+                )
             }} />
         </>
     )

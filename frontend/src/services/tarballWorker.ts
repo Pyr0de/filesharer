@@ -5,6 +5,7 @@ declare class Go {
 }
 declare global {
     function createTarball(files: File[]): Promise<Uint8Array>
+    function openTarball(data: Uint8Array): Promise<File[]>
 }
 
 importScripts("../../wasm/wasm_exec.js")
@@ -19,9 +20,9 @@ async function initWasm(): Promise<void> {
     go.run(result.instance)
 }
 
-onmessage = async (event: MessageEvent<File[]>) => {
+onmessage = async (event: MessageEvent<Uint8Array>) => {
     await initWasm()
 
-    postMessage(await self.createTarball(event.data))
+    postMessage(await self.openTarball(event.data))
 }
 
