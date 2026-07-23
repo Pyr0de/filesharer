@@ -12,7 +12,9 @@ type File struct {
 }
 
 func main() {
-	js.Global().Set("openTarball", js.FuncOf(openTarball))
 	js.Global().Set("createTarball", js.FuncOf(createTarballHelper))
+	js.Global().Set("startOpenTarball", js.FuncOf(startOpenTarball))
+	js.Global().Set("feedOpenTarball", js.FuncOf(feedOpenTarball))
+	js.Global().Set("closeOpenTarball", js.FuncOf(closeOpenTarball))
 	select {}
 }

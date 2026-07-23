@@ -6,30 +6,49 @@ interface FileDownloadProp {
     code: number
 }
 
+type DataMap = {
+    files: File[];
+};
+
+type WorkerMessage<T extends keyof DataMap = keyof DataMap> = {
+    type: T;
+    data: DataMap[T];
+};
+
 export const FileDownload = ({ code }: FileDownloadProp) => {
     const [files, setFiles] = useState<File[]>([]);
     const [status, setStatus] = useState("")
 
     const downloadFile = async () => {
-        let data: Uint8Array;
+        let response: Response
         try {
-            data = await getFile(code)
+            response = await getFile(code)
         }catch (e) {
             setStatus(`Could not get fileshare id: ${code}`)
             return
         }
         setStatus("Processing...")
-        const tarballPromise: Promise<File[]> = new Promise((res, rej) => {
+        const tarballPromise: Promise<File[]> = new Promise(async (res, rej) => {
             const worker = new Worker(
                 new URL("../services/tarballWorker.ts", import.meta.url),
             );
-            worker.onmessage = (event: MessageEvent<File[]>) => {
-                res(event.data)
+            worker.onmessage = async (event: MessageEvent<WorkerMessage>) => {
+                res(event.data.data)
             }
             worker.onerror = (e) => {
                 rej(e)
             }
-            worker.postMessage({type: "open", data })
+            worker.postMessage({type: "startOpen", data: null})
+
+            const reader = response.body?.getReader()
+            while (true) {
+                const data = await reader?.read()
+                if (data?.done || data?.value === undefined) {
+                    break
+                }
+                worker.postMessage({type: "feedOpen", data: data?.value})
+            }
+            worker.postMessage({type: "closeOpen", data: null})
         })
 
         setFiles(await tarballPromise)
