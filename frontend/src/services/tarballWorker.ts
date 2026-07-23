@@ -20,9 +20,14 @@ async function initWasm(): Promise<void> {
     go.run(result.instance)
 }
 
-onmessage = async (event: MessageEvent<Uint8Array>) => {
+onmessage = async (event: MessageEvent<File[] | Uint8Array>) => {
     await initWasm()
 
-    postMessage(await self.openTarball(event.data))
+    if (event.data instanceof Uint8Array) {
+        postMessage(await self.openTarball(event.data))
+    }else {
+        postMessage(await self.createTarball(event.data))
+    }
+
 }
 
