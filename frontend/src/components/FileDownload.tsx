@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FileDisplay } from "./FileDisplay";
 import { getFile } from "../services/api"
 
@@ -18,6 +18,8 @@ type WorkerMessage<T extends keyof DataMap = keyof DataMap> = {
 export const FileDownload = ({ code }: FileDownloadProp) => {
     const [files, setFiles] = useState<File[]>([]);
     const [status, setStatus] = useState("")
+    const [progress, setProgress] = useState(0.0)
+    const lastPercent = useRef(-1);
 
     const downloadFile = async () => {
         let response: Response
@@ -40,11 +42,21 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
             }
             worker.postMessage({type: "startOpen", data: null})
 
+            setProgress(0.0)
+            let completed = 0
+            const total = Number(response.headers.get("content-length"))
             const reader = response.body?.getReader()
             while (true) {
                 const data = await reader?.read()
                 if (data?.done || data?.value === undefined) {
+                    setProgress(100.0)
                     break
+                }
+                completed += data?.value.length
+                const percent = Math.floor(completed / total * 100)
+                if (percent !== lastPercent.current) {
+                    lastPercent.current = percent;
+                    setProgress(percent);
                 }
                 worker.postMessage({type: "feedOpen", data: data?.value})
             }
@@ -66,6 +78,7 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
 
     return (
         <>
+            <p>{progress}%</p>
             <p>{status}</p>
             <FileDisplay files={files} button={(index) => {
                 const url = URL.createObjectURL(files[index])
