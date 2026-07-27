@@ -29,7 +29,7 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
             worker.onerror = (e) => {
                 rej(e)
             }
-            worker.postMessage(data)
+            worker.postMessage({type: "open", data })
         })
 
         setFiles(await tarballPromise)

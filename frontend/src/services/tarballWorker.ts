@@ -8,6 +8,16 @@ declare global {
     function openTarball(data: Uint8Array): Promise<File[]>
 }
 
+type DataMap = {
+    create: File[];
+    open: Uint8Array;
+};
+
+type Message<T extends keyof DataMap = keyof DataMap> = {
+    type: T;
+    data: DataMap[T];
+};
+
 importScripts("../../wasm/wasm_exec.js")
 
 async function initWasm(): Promise<void> {
@@ -20,14 +30,15 @@ async function initWasm(): Promise<void> {
     go.run(result.instance)
 }
 
-onmessage = async (event: MessageEvent<File[] | Uint8Array>) => {
-    await initWasm()
+const init = initWasm()
 
-    if (event.data instanceof Uint8Array) {
-        postMessage(await self.openTarball(event.data))
-    }else {
-        postMessage(await self.createTarball(event.data))
-    }
+onmessage = async (event: MessageEvent<Message>) => {
+    await init
+
+    if (event.data.type === "create")
+        postMessage(await self.createTarball(event.data.data as File[]))
+    else if (event.data.type === "open")
+        postMessage(await self.openTarball(event.data.data as Uint8Array))
 
 }
 

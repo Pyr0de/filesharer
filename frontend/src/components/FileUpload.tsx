@@ -50,7 +50,7 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
             worker.onerror = (e) => {
                 rej(e)
             }
-            worker.postMessage(files)
+            worker.postMessage({type: "create", data: files})
         })
         setStatus("Processing")
         const done = await Promise.all([tarballPromise, createFileshare()])
