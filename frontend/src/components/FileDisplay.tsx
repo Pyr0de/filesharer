@@ -8,54 +8,17 @@ interface FileDisplayProps {
 
 export const FileDisplay = ({ files, button }: FileDisplayProps) => {
     return (
-        <div
-            style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(5, 1fr)",
-                gap: "12px",
-                marginTop: "16px",
-            }}
-        >
+        <div className="grid grid-cols-5 gap-3">
             {files.map((file, index) => (
                 <div
                     key={`${file.name}-${index}`}
-                    style={{
-                        border: "1px solid #ddd",
-                        borderRadius: "8px",
-                        padding: "12px",
-                        backgroundColor: "#fafafa",
-                        minHeight: "70px",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                    }}
+                    className="border-border bg-surface flex min-h-[70px] flex-col justify-between rounded-lg border p-3"
                 >
-                    <div
-                        style={{
-                            fontWeight: 600,
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                        }}
-                        title={file.name}
-                    >
+                    <div className="overflow-hidden font-semibold" title={file.name}>
                         {file.name}
                     </div>
-
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            marginTop: "8px",
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontSize: "0.85rem",
-                                color: "#666",
-                            }}
-                        >
+                    <div className="mt-2 flex items-center justify-between">
+                        <span className="font-mono text-[0.85rem] text-[#565f89]">
                             {bytesToLargestUnit(file.size)}
                         </span>
                         <div>{button(index)}</div>
