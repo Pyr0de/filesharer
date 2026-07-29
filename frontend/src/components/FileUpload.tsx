@@ -70,38 +70,44 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
     };
 
     return (
-        <div>
+        <div className="font-body bg-void rounded-xl p-8 text-[#c0caf5]">
             {code != "" && (
-                <p>
-                    Uploaded with code:
-                    <a href={`${window.location}download?code=${code}`}>{code}</a>
-                </p>
+                <div className="border-accent-dim mb-4 rounded-lg border px-3.5 py-2.5 text-xs">
+                    Uploaded with code:{" "}
+                    <a
+                        href={`${window.location}download?code=${code}`}
+                        className="font-mono text-[#7dcfff]"
+                    >
+                        {code}
+                    </a>
+                </div>
             )}
 
-            <input type="file" multiple onChange={handleFileChange} />
+            <input type="file" multiple onChange={handleFileChange} className="hidden" />
 
-            <FileDisplay
-                files={files}
-                button={(index) => {
-                    return (
-                        <button
-                            type="button"
-                            onClick={() => removeFile(index)}
-                            style={{
-                                border: "none",
-                                background: "transparent",
-                                color: "#d32f2f",
-                                cursor: "pointer",
-                                padding: 0,
-                                fontSize: "0.85rem",
-                            }}
-                        >
-                            Delete
-                        </button>
-                    );
-                }}
-            />
-            <button onClick={() => uploadFiles()}>Done</button>
+            <div className="bg-surface border-border rounded-lg border px-4 py-5">
+                <FileDisplay
+                    files={files}
+                    button={(index) => {
+                        return (
+                            <button
+                                type="button"
+                                onClick={() => removeFile(index)}
+                                className="text-danger font-body cursor-pointer border-0 p-0"
+                            >
+                                Delete
+                            </button>
+                        );
+                    }}
+                />
+            </div>
+
+            <button
+                onClick={() => uploadFiles()}
+                className="bg-accent text-void mt-4 cursor-pointer rounded-lg border-0 px-4 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
+            >
+                Done
+            </button>
         </div>
     );
 };
