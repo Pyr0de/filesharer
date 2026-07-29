@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { FileDownload } from "../components/FileDownload"
+import { useState } from "react";
+import { FileDownload } from "../components/FileDownload";
 import { Search } from "../components/Search";
 
 export const DownloadPage = () => {
@@ -7,9 +7,9 @@ export const DownloadPage = () => {
 
     return (
         <>
-        <FileDownload code={code} />
+            <FileDownload code={code} />
 
-        <Search setCode={setCode} />
+            <Search setCode={setCode} />
         </>
-    )
-}
+    );
+};
