@@ -6,15 +6,6 @@ interface FileDownloadProp {
     code: number
 }
 
-type DataMap = {
-    files: File[];
-};
-
-type WorkerMessage<T extends keyof DataMap = keyof DataMap> = {
-    type: T;
-    data: DataMap[T];
-};
-
 export const FileDownload = ({ code }: FileDownloadProp) => {
     const [files, setFiles] = useState<File[]>([]);
     const [status, setStatus] = useState("")
@@ -34,8 +25,8 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
             const worker = new Worker(
                 new URL("../services/tarballWorker.ts", import.meta.url),
             );
-            worker.onmessage = async (event: MessageEvent<WorkerMessage>) => {
-                res(event.data.data)
+            worker.onmessage = async (event: MessageEvent<File[]>) => {
+                res(event.data)
             }
             worker.onerror = (e) => {
                 rej(e)

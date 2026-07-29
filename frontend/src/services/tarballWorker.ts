@@ -37,7 +37,7 @@ async function initWasm(): Promise<void> {
 }
 
 globalThis.onFilesReady = (files: File[]) => {
-    postMessage({type: "files", data: files})
+    postMessage(files)
     return null
 }
 
