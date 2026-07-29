@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+    --color-void: #0B0D10;
+    --color-surface: #14171B;
+    --color-surface-raised: #1B1F24;
+    --color-border: #262B32;
+    --color-accent: #C9A15A;
+    --color-accent-dim: #8A6F3E;
+    --color-success: #5FA88A;
+    --color-danger: #C1554B;
+
+    --font-display: "Space Grotesk", sans-serif;
+    --font-body: "Inter", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
