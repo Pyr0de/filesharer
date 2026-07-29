@@ -26,6 +26,7 @@ export const Search = ({ setCode }: SearchProp) => {
         if (url_code == null) {
             return
         }
+        setCodeText(url_code)
         if (!/^\d{6}$/.test(url_code)) {
             showToast(`Invalid code: ${url_code}`, "error", 3000)
             return

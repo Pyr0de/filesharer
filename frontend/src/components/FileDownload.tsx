@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FileDisplay } from "./FileDisplay";
 import { getFile } from "../services/api"
+import { bytesToLargestUnit } from "../utils/utils";
 
 interface FileDownloadProp {
     code: number
@@ -10,6 +11,7 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
     const [files, setFiles] = useState<File[]>([]);
     const [status, setStatus] = useState("")
     const [progress, setProgress] = useState(0.0)
+    const [remaining, setRemaining] = useState("")
     const lastPercent = useRef(-1);
 
     const downloadFile = async () => {
@@ -48,6 +50,7 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
                 if (percent !== lastPercent.current) {
                     lastPercent.current = percent;
                     setProgress(percent);
+                    setRemaining(`${bytesToLargestUnit(completed)}/${bytesToLargestUnit(total)}`)
                 }
                 worker.postMessage({type: "feedOpen", data: data?.value})
             }
@@ -69,7 +72,7 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
 
     return (
         <>
-            <p>{progress}%</p>
+            <p>{progress}% {remaining}</p>
             <p>{status}</p>
             <FileDisplay files={files} button={(index) => {
                 const url = URL.createObjectURL(files[index])

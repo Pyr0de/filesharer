@@ -9,5 +9,5 @@ export function bytesToLargestUnit(bytes: number): string {
         unit += 1
     }
 
-    return `${value.toFixed(2)} ${order[unit]}`
+    return `${value.toFixed(2)}${order[unit]}`
 }
