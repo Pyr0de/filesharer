@@ -1,4 +1,4 @@
-import { type ChangeEvent, useState, useEffect } from "react";
+import { type ChangeEvent, useState, useEffect, useRef } from "react";
 import { FileDisplay } from "./FileDisplay";
 import { createFileshare, uploadFile } from "../services/api";
 import { bytesToLargestUnit } from "../utils/utils";
@@ -69,8 +69,10 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
         setCode(`${fileshare_info.code}`);
     };
 
+    const inputTag = useRef<HTMLInputElement>(null);
+
     return (
-        <div className="font-body bg-void rounded-xl p-8 text-[#c0caf5]">
+        <div className="font-body bg-void rounded-xl px-8 py-4 text-[#c0caf5]">
             {code != "" && (
                 <div className="border-accent-dim mb-4 rounded-lg border px-3.5 py-2.5 text-xs">
                     Uploaded with code:{" "}
@@ -82,8 +84,13 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
                     </a>
                 </div>
             )}
-
-            <input type="file" multiple onChange={handleFileChange} className="hidden" />
+            <input
+                ref={inputTag}
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                className="hidden"
+            />
 
             <div className="bg-surface border-border rounded-lg border px-4 py-5">
                 <FileDisplay
@@ -99,6 +106,14 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
                             </button>
                         );
                     }}
+                    addFileButton={
+                        <button
+                            className="border-border bg-surface text-highlight flex min-h-[70px] cursor-pointer flex-col justify-between rounded-lg border p-3 hover:opacity-90"
+                            onClick={() => inputTag.current?.click()}
+                        >
+                            <p className="flex h-full items-center justify-center">Add files</p>
+                        </button>
+                    }
                 />
             </div>
 

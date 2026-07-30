@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 
 export function Header() {
     return (
-        <header className="bg-void/95 border-border sticky top-0 z-50 border-b backdrop-blur">
+        <header className="bg-surface border-border sticky top-0 z-50 border-b backdrop-blur">
             <nav className="mx-auto flex items-center gap-6 px-6 py-4">
                 <span className="font-display text-accent mr-4 text-lg font-semibold tracking-tight">
                     FileSharer

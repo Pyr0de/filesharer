@@ -3,12 +3,13 @@ import { bytesToLargestUnit } from "../utils/utils";
 
 interface FileDisplayProps {
     files: File[];
+    addFileButton: ReactNode | undefined;
     button: (index: number) => ReactNode;
 }
 
-export const FileDisplay = ({ files, button }: FileDisplayProps) => {
+export const FileDisplay = ({ files, addFileButton, button }: FileDisplayProps) => {
     return (
-        <div className="grid grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
             {files.map((file, index) => (
                 <div
                     key={`${file.name}-${index}`}
@@ -25,6 +26,7 @@ export const FileDisplay = ({ files, button }: FileDisplayProps) => {
                     </div>
                 </div>
             ))}
+            {addFileButton}
         </div>
     );
 };

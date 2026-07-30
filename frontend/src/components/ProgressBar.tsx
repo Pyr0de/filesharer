@@ -7,16 +7,16 @@ interface ProgressBarProps {
 export const ProgressBar = ({ current, total, percentage }: ProgressBarProps) => {
     const progressColor = percentage > 1 ? "bg-danger" : "bg-success";
     return (
-        <div className="font-body bg-surface-raised m-2 flex h-10 rounded-full">
-            <div className="m-2 flex-1">
+        <div className="border-border font-body bg-surface mx-8 my-4 flex h-10 rounded-full border border-2 p-1">
+            <div className="flex-1">
                 <div
-                    className={`${progressColor} max-w-[100%] min-w-fit rounded-full transition-[width] duration-300 ease-out`}
+                    className={`${progressColor} h-full max-w-[100%] min-w-fit rounded-full transition-[width] duration-300 ease-out`}
                     style={{ width: `${percentage * 100}%` }}
                 >
-                    <p className="mx-3 text-right">{current}</p>
+                    <p className="mx-3 flex h-full items-center text-right">{current}</p>
                 </div>
             </div>
-            <p className="text-highlight m-2 mr-3 ml-auto">{total}</p>
+            <p className="text-highlight mx-3 flex items-center">{total}</p>
         </div>
     );
 };
