@@ -1,22 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { FileDisplay } from "./FileDisplay";
 import { getFile } from "../services/api";
-import { bytesToLargestUnit } from "../utils/utils";
-import { ProgressBar } from "./ProgressBar";
+import { useToast } from "../context/toast";
 
 interface FileDownloadProp {
     code: number;
+    setCode: (code: number) => void;
+    setProgress: (progress: DownloadProgress) => void;
 }
 
-interface DownloadProgress {
+export interface DownloadProgress {
     current: number;
     total: number;
 }
 
-export const FileDownload = ({ code }: FileDownloadProp) => {
+export const FileDownload = ({ code, setCode, setProgress }: FileDownloadProp) => {
     const [files, setFiles] = useState<File[]>([]);
     const [status, setStatus] = useState("");
-    const [progress, setProgress] = useState<DownloadProgress>();
+    const { showToast } = useToast();
     const lastPercent = useRef(-1);
 
     const downloadFile = async () => {
@@ -24,10 +25,11 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
         try {
             response = await getFile(code);
         } catch (e) {
+            showToast(`Could not get fileshare id: ${code}`, "error", 3000);
             setStatus(`Could not get fileshare id: ${code}`);
+            setCode(0);
             return;
         }
-        setStatus("Processing...");
         const tarballPromise: Promise<File[]> = new Promise(async (res, rej) => {
             const worker = new Worker(new URL("../services/tarballWorker.ts", import.meta.url));
             worker.onmessage = async (event: MessageEvent<File[]>) => {
@@ -58,6 +60,7 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
                 }
                 worker.postMessage({ type: "feedOpen", data: data?.value });
             }
+            setStatus("Processing...");
             worker.postMessage({ type: "closeOpen", data: null });
         });
 
@@ -74,27 +77,25 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
         downloadFile();
     }, [code]);
 
+    if (files.length == 0) {
+        return <>
+        </>;
+    }
+
     return (
-        <>
-            {progress && (
-                <ProgressBar
-                    current={`${bytesToLargestUnit(progress.current)}`}
-                    total={`${bytesToLargestUnit(progress.total)}`}
-                    percentage={progress.current / progress.total}
-                />
-            )}
-            <p>{status}</p>
+        <div className="m-4 bg-surface border-border rounded-lg border px-4 py-5 bg-void text-accent">
             <FileDisplay
                 files={files}
                 button={(index) => {
                     const url = URL.createObjectURL(files[index]);
                     return (
-                        <a href={url} download={files[index].name}>
-                            <button>Download</button>
+                        <a href={url} download={files[index].name} className="">
+                            <button className="cursor-pointer">Download</button>
                         </a>
                     );
                 }}
+                addFileButton={undefined}
             />
-        </>
+        </div>
     );
 };

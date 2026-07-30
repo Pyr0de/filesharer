@@ -35,9 +35,21 @@ export const Search = ({ setCode }: SearchProp) => {
     }, [location]);
 
     return (
-        <>
-            <input type="search" value={codeText} onChange={(e) => setCodeText(e.target.value)} />
-            <button onClick={onClick}>Download</button>
-        </>
+        <div className="flex w-full items-center justify-center gap-3 p-5 bg-surface-raised">
+            <input
+                type="search"
+                inputMode="numeric"
+                value={codeText}
+                onChange={(e) => setCodeText(e.target.value)}
+                className="border-border bg-surface text-accent focus:ring-accent-dim h-12 w-48 rounded-lg border text-center font-mono text-xl font-semibold tracking-[0.4em] transition outline-none focus:ring-2"
+                placeholder="000000"
+            />
+            <button
+                onClick={onClick}
+                className="bg-accent text-void h-12 cursor-pointer rounded-lg border-0 px-5 text-sm font-semibold transition-opacity hover:opacity-90"
+            >
+                Download
+            </button>
+        </div>
     );
 };

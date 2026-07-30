@@ -1,13 +1,23 @@
 import { useState } from "react";
-import { FileDownload } from "../components/FileDownload";
+import { FileDownload, type DownloadProgress } from "../components/FileDownload";
 import { Search } from "../components/Search";
+import { ProgressBar } from "../components/ProgressBar";
+import { bytesToLargestUnit } from "../utils/utils";
 
 export const DownloadPage = () => {
     const [code, setCode] = useState<number>(0);
+    const [progress, setProgress] = useState<DownloadProgress>();
 
     return (
         <>
-            <FileDownload code={code} />
+            {progress && (
+                <ProgressBar
+                    current={`${bytesToLargestUnit(progress.current)}`}
+                    total={`${bytesToLargestUnit(progress.total)}`}
+                    percentage={progress.current / progress.total}
+                />
+            )}
+            <FileDownload code={code} setCode={setCode} setProgress={setProgress}/>
 
             <Search setCode={setCode} />
         </>
