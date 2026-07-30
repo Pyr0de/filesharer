@@ -2,16 +2,21 @@ import { useEffect, useRef, useState } from "react";
 import { FileDisplay } from "./FileDisplay";
 import { getFile } from "../services/api";
 import { bytesToLargestUnit } from "../utils/utils";
+import { ProgressBar } from "./ProgressBar";
 
 interface FileDownloadProp {
     code: number;
 }
 
+interface DownloadProgress {
+    current: number;
+    total: number;
+}
+
 export const FileDownload = ({ code }: FileDownloadProp) => {
     const [files, setFiles] = useState<File[]>([]);
     const [status, setStatus] = useState("");
-    const [progress, setProgress] = useState(0.0);
-    const [remaining, setRemaining] = useState("");
+    const [progress, setProgress] = useState<DownloadProgress>();
     const lastPercent = useRef(-1);
 
     const downloadFile = async () => {
@@ -33,22 +38,23 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
             };
             worker.postMessage({ type: "startOpen", data: null });
 
-            setProgress(0.0);
             let completed = 0;
             const total = Number(response.headers.get("content-length"));
             const reader = response.body?.getReader();
+            setProgress({ current: 0, total });
+
             while (true) {
                 const data = await reader?.read();
                 if (data?.done || data?.value === undefined) {
-                    setProgress(100.0);
+                    setProgress({ current: total, total });
                     break;
                 }
                 completed += data?.value.length;
                 const percent = Math.floor((completed / total) * 100);
+
                 if (percent !== lastPercent.current) {
                     lastPercent.current = percent;
-                    setProgress(percent);
-                    setRemaining(`${bytesToLargestUnit(completed)}/${bytesToLargestUnit(total)}`);
+                    setProgress({ current: completed, total });
                 }
                 worker.postMessage({ type: "feedOpen", data: data?.value });
             }
@@ -70,9 +76,13 @@ export const FileDownload = ({ code }: FileDownloadProp) => {
 
     return (
         <>
-            <p>
-                {progress}% {remaining}
-            </p>
+            {progress && (
+                <ProgressBar
+                    current={`${bytesToLargestUnit(progress.current)}`}
+                    total={`${bytesToLargestUnit(progress.total)}`}
+                    percentage={progress.current / progress.total}
+                />
+            )}
             <p>{status}</p>
             <FileDisplay
                 files={files}
