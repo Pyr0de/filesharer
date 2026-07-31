@@ -12,8 +12,9 @@ export const DownloadPage = () => {
         <>
             {progress && (
                 <ProgressBar
-                    current={`${bytesToLargestUnit(progress.current)}`}
-                    total={`${bytesToLargestUnit(progress.total)}`}
+                    label="Download"
+                    barLabel={`${bytesToLargestUnit(progress.current)}`}
+                    rightLabel={`${bytesToLargestUnit(progress.total)}`}
                     percentage={progress.current / progress.total}
                 />
             )}

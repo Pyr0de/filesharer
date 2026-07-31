@@ -10,8 +10,9 @@ export const HomePage = () => {
     return (
         <>
             <ProgressBar
-                current={`${bytesToLargestUnit(totalSize)}`}
-                total={`${bytesToLargestUnit(maxSize)}`}
+                label="Size"
+                barLabel={`${bytesToLargestUnit(totalSize)}`}
+                rightLabel={`${bytesToLargestUnit(maxSize)}`}
                 percentage={totalSize / 10485760}
             />
             <FileUploader onSizeChange={setTotalSize} />
