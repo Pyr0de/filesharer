@@ -35,7 +35,7 @@ export const Search = ({ setCode }: SearchProp) => {
     }, [location]);
 
     return (
-        <div className="flex w-full items-center justify-center gap-3 p-5 bg-surface-raised">
+        <div className="bg-surface-raised flex w-full items-center justify-center gap-3 p-5">
             <input
                 type="search"
                 inputMode="numeric"

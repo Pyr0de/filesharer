@@ -19,7 +19,7 @@ export const FileDisplay = ({ files, addFileButton, button }: FileDisplayProps) 
                         {file.name}
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                        <span className="font-mono text-[0.85rem] text-muted">
+                        <span className="text-muted font-mono text-[0.85rem]">
                             {bytesToLargestUnit(file.size)}
                         </span>
                         <div>{button(index)}</div>

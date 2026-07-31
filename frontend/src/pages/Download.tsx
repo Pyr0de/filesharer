@@ -17,7 +17,7 @@ export const DownloadPage = () => {
                     percentage={progress.current / progress.total}
                 />
             )}
-            <FileDownload code={code} setCode={setCode} setProgress={setProgress}/>
+            <FileDownload code={code} setCode={setCode} setProgress={setProgress} />
 
             <Search setCode={setCode} />
         </>

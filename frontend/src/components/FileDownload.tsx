@@ -78,12 +78,11 @@ export const FileDownload = ({ code, setCode, setProgress }: FileDownloadProp) =
     }, [code]);
 
     if (files.length == 0) {
-        return <>
-        </>;
+        return <></>;
     }
 
     return (
-        <div className="m-4 bg-surface border-border rounded-lg border px-4 py-5 bg-void text-accent">
+        <div className="bg-surface border-border bg-void text-accent m-4 rounded-lg border px-4 py-5">
             <FileDisplay
                 files={files}
                 button={(index) => {
