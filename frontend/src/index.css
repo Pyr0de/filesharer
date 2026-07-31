@@ -13,6 +13,7 @@
     --color-text: var(--text);
     --color-link: var(--link);
     --color-muted: var(--muted);
+    --color-opposite-theme: var(--color-opposite-theme);
 
     --font-display: "Space Grotesk", sans-serif;
     --font-body: "Inter", sans-serif;
@@ -31,6 +32,7 @@
     --color-text: #c0caf5;
     --color-link: #7dcfff;
     --color-muted: #565f89;
+    --color-opposite-theme: #eeeeee;
 }
 
 .light {
@@ -46,6 +48,7 @@
     --color-text: #1a1b26;
     --color-link: #0a6e94;
     --color-muted: #6b7280;
+    --color-opposite-theme: #444444;
 }
 
 @keyframes slideIn {
