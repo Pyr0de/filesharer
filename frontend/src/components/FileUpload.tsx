@@ -72,13 +72,13 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
     const inputTag = useRef<HTMLInputElement>(null);
 
     return (
-        <div className="font-body bg-void rounded-xl px-8 py-4 text-[#c0caf5]">
+        <div className="font-body bg-void rounded-xl px-8 py-4 text-text">
             {code != "" && (
                 <div className="border-accent-dim mb-4 rounded-lg border px-3.5 py-2.5 text-xs">
                     Uploaded with code:{" "}
                     <a
                         href={`${window.location}download?code=${code}`}
-                        className="font-mono text-[#7dcfff]"
+                        className="font-mono text-link"
                     >
                         {code}
                     </a>

@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-    --color-highlight: #cfc9c2;
     --color-void: #1a1b26;
     --color-surface: #24283b;
     --color-surface-raised: #1f2335;
@@ -10,6 +9,10 @@
     --color-accent-dim: #3d59a1;
     --color-success: #9ece6a;
     --color-danger: #f7768e;
+    --color-highlight: #cfc9c2;
+    --color-text: #c0caf5;
+    --color-link: #7dcfff;
+    --color-muted: #565f89;
 
     --font-display: "Space Grotesk", sans-serif;
     --font-body: "Inter", sans-serif;
