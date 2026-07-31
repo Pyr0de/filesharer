@@ -1,6 +1,24 @@
 @import "tailwindcss";
 
 @theme {
+    --color-void: var(--void);
+    --color-surface: var(--surface);
+    --color-surface-raised: var(--surface-raised);
+    --color-border: var(--border);
+    --color-accent: var(--accent);
+    --color-accent-dim: var(--accent-dim);
+    --color-success: var(--success);
+    --color-danger: var(--danger);
+    --color-highlight: var(--highligh);
+    --color-text: var(--text);
+    --color-link: var(--link);
+    --color-muted: var(--muted);
+
+    --font-display: "Space Grotesk", sans-serif;
+    --font-body: "Inter", sans-serif;
+}
+
+.dark {
     --color-void: #1a1b26;
     --color-surface: #24283b;
     --color-surface-raised: #1f2335;
@@ -13,9 +31,21 @@
     --color-text: #c0caf5;
     --color-link: #7dcfff;
     --color-muted: #565f89;
+}
 
-    --font-display: "Space Grotesk", sans-serif;
-    --font-body: "Inter", sans-serif;
+.light {
+    --color-void: #f4f4f8;
+    --color-surface: #ffffff;
+    --color-surface-raised: #ebecf3;
+    --color-border: #c8ccdb;
+    --color-accent: #3d59a1;
+    --color-accent-dim: #b4c5eb;
+    --color-success: #4c8b2c;
+    --color-danger: #c0392b;
+    --color-highlight: #4a4740;
+    --color-text: #1a1b26;
+    --color-link: #0a6e94;
+    --color-muted: #6b7280;
 }
 
 @keyframes slideIn {
