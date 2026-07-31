@@ -18,7 +18,7 @@ export async function uploadFile(url: string, file: Uint8Array): Promise<boolean
             "Content-Type": "application/octet-stream",
         },
         method: "PUT",
-        body: file,
+        body: file as BodyInit,
     });
 
     return req.ok;

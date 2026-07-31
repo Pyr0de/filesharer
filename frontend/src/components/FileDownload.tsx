@@ -16,7 +16,6 @@ export interface DownloadProgress {
 
 export const FileDownload = ({ code, setCode, setProgress }: FileDownloadProp) => {
     const [files, setFiles] = useState<File[]>([]);
-    const [status, setStatus] = useState("");
     const { showToast } = useToast();
     const lastPercent = useRef(-1);
 
@@ -26,7 +25,6 @@ export const FileDownload = ({ code, setCode, setProgress }: FileDownloadProp) =
             response = await getFile(code);
         } catch (e) {
             showToast(`Could not get fileshare id: ${code}`, "error", 3000);
-            setStatus(`Could not get fileshare id: ${code}`);
             setCode(0);
             return;
         }
@@ -60,12 +58,10 @@ export const FileDownload = ({ code, setCode, setProgress }: FileDownloadProp) =
                 }
                 worker.postMessage({ type: "feedOpen", data: data?.value });
             }
-            setStatus("Processing...");
             worker.postMessage({ type: "closeOpen", data: null });
         });
 
         setFiles(await tarballPromise);
-        setStatus("Done");
     };
 
     useEffect(() => {
@@ -73,7 +69,6 @@ export const FileDownload = ({ code, setCode, setProgress }: FileDownloadProp) =
             return;
         }
 
-        setStatus("Downloading...");
         downloadFile();
     }, [code]);
 
