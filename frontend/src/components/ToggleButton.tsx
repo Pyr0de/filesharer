@@ -1,9 +1,10 @@
 interface ToggleButtonProps {
+    value: boolean;
     setValue: (value: boolean) => void;
     className: string;
 }
 
-export const ToggleButton = ({ setValue, className }: ToggleButtonProps) => {
+export const ToggleButton = ({ value, setValue, className }: ToggleButtonProps) => {
     return (
         <label
             className={`border-border inline-flex cursor-pointer items-center rounded-full border ${className}`}
@@ -11,6 +12,7 @@ export const ToggleButton = ({ setValue, className }: ToggleButtonProps) => {
             <input
                 type="checkbox"
                 value=""
+                checked={value}
                 className="peer sr-only"
                 onChange={(event) => {
                     setValue(event.target.checked);

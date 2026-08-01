@@ -19,7 +19,7 @@
     --font-body: "Inter", sans-serif;
 }
 
-.dark {
+[data-theme="dark"] {
     --color-void: #1a1b26;
     --color-surface: #24283b;
     --color-surface-raised: #1f2335;
@@ -35,7 +35,7 @@
     --color-opposite-theme: #eeeeee;
 }
 
-.light {
+[data-theme="light"] {
     --color-void: #f4f4f8;
     --color-surface: #ffffff;
     --color-surface-raised: #ebecf3;
