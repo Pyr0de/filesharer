@@ -3,6 +3,7 @@ import { FileDisplay } from "./FileDisplay";
 import { createFileshare, uploadFile } from "../services/api";
 import { bytesToLargestUnit } from "../utils/utils";
 import { useToast } from "../context/toast";
+import { Link } from "react-router-dom";
 
 interface FileUploaderProps {
     onSizeChange: (size: number) => void;
@@ -46,6 +47,7 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
         }
         const tarballPromise: Promise<Uint8Array> = new Promise((res, rej) => {
             const worker = new Worker(new URL("../services/tarballWorker.ts", import.meta.url));
+
             worker.onmessage = (event: MessageEvent<Uint8Array>) => {
                 res(event.data);
             };
@@ -77,12 +79,15 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
             {code != "" && (
                 <div className="border-accent-dim mb-4 rounded-lg border px-3.5 py-2.5 text-xs">
                     Uploaded with code:{" "}
-                    <a
-                        href={`${window.location}download?code=${code}`}
+                    <Link
+                        to={{
+                            pathname: "download",
+                            search: `?code=${code}`
+                        }}
                         className="text-link font-mono"
                     >
                         {code}
-                    </a>
+                    </Link>
                 </div>
             )}
             <input
