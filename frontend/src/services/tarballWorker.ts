@@ -24,12 +24,15 @@ type Message<T extends keyof DataMap = keyof DataMap> = {
     data: DataMap[T];
 };
 
-importScripts("../../wasm/wasm_exec.js");
+importScripts(`${import.meta.env.BASE_URL}/wasm/wasm_exec.js`);
 
 async function initWasm(): Promise<void> {
     const go = new Go();
 
-    const result = await WebAssembly.instantiateStreaming(fetch("/wasm/app.wasm"), go.importObject);
+    const result = await WebAssembly.instantiateStreaming(
+        fetch(`${import.meta.env.BASE_URL}/wasm/app.wasm`),
+        go.importObject,
+    );
     go.run(result.instance);
 }
 
