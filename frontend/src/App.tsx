@@ -5,9 +5,6 @@ import { DownloadPage } from "./pages/Download";
 import { Header } from "./components/Header";
 
 export default function App() {
-    if (!window.location.hash) {
-        window.location.replace(`/#${window.location.pathname}${window.location.search}`);
-    }
     return (
         <HashRouter>
             <Header />
