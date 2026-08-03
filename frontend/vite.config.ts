@@ -9,4 +9,5 @@ export default defineConfig({
     define: {
         API_URL: process.env.API_URL,
     },
+    base: process.env.BASE ? `/${process.env.BASE}` : "/"
 });

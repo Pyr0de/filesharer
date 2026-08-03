@@ -9,6 +9,7 @@ jobs:
 
     env:
       VITE_API_URL: ${{ vars.API_URL }}
+      BASE: ${{ github.event.repository.name }}
 
     defaults:
       run:
