@@ -18,7 +18,9 @@ export const ProgressBar = ({ label, barLabel, rightLabel, percentage }: Progres
                     className={`${progressColor} h-full max-w-[100%] min-w-fit rounded-full transition-[width] duration-300 ease-out`}
                     style={{ width: `${percentage * 100}%` }}
                 >
-                    <p className="mx-3 justify-end flex h-full items-center text-right">{barLabel}</p>
+                    <p className="mx-3 flex h-full items-center justify-end text-right">
+                        {barLabel}
+                    </p>
                 </div>
             </div>
         </div>

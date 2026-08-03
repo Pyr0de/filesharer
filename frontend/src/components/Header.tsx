@@ -3,16 +3,16 @@ import { ToggleButton } from "./ToggleButton";
 import { useState, useEffect } from "react";
 
 export function Header() {
-    const stored_theme = localStorage.getItem("filesharer-theme")
+    const stored_theme = localStorage.getItem("filesharer-theme");
     const [theme, setTheme] = useState(stored_theme == null ? "dark" : stored_theme);
     useEffect(() => {
         document.documentElement.dataset.theme = theme;
-        localStorage.setItem("filesharer-theme", theme)
+        localStorage.setItem("filesharer-theme", theme);
     }, [theme]);
 
     const onToggle = (state: boolean) => {
-        setTheme(state ? "light" : "dark")
-    }
+        setTheme(state ? "light" : "dark");
+    };
     return (
         <header className="bg-surface border-border sticky top-0 z-50 flex items-center border-b backdrop-blur">
             <nav className="flex items-center gap-6 px-6 py-4">
