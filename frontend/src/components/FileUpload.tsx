@@ -52,6 +52,7 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
             worker.onerror = (e) => {
                 rej(e);
             };
+            worker.postMessage({ type: "init", data: import.meta.env.BASE_URL })
             worker.postMessage({ type: "create", data: files });
         });
         showToast("Processing", "info", 3000);

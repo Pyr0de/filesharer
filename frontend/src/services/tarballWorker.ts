@@ -13,6 +13,7 @@ declare global {
 }
 
 type DataMap = {
+    init: string;
     create: File[];
     startOpen: null;
     feedOpen: Uint8Array;
@@ -24,13 +25,13 @@ type Message<T extends keyof DataMap = keyof DataMap> = {
     data: DataMap[T];
 };
 
-importScripts(`${import.meta.env.BASE_URL}/wasm/wasm_exec.js`);
+async function initWasm(base: string): Promise<void> {
+    importScripts(`${base}/wasm/wasm_exec.js`);
 
-async function initWasm(): Promise<void> {
     const go = new Go();
 
     const result = await WebAssembly.instantiateStreaming(
-        fetch(`${import.meta.env.BASE_URL}/wasm/app.wasm`),
+        fetch(`${base}/wasm/app.wasm`),
         go.importObject,
     );
     go.run(result.instance);
@@ -41,9 +42,19 @@ globalThis.onFilesReady = (files: File[]) => {
     return null;
 };
 
-const init = initWasm();
+let init: Promise<void>
 
 onmessage = async (event: MessageEvent<Message>) => {
+    if (event.data.type === "init") {
+        init = initWasm(event.data.data as string)
+
+        return
+    }
+
+    if (init == null) {
+        return
+    }
+
     await init;
 
     if (event.data.type === "create")

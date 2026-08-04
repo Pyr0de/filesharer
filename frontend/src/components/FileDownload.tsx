@@ -36,6 +36,7 @@ export const FileDownload = ({ code, setCode, setProgress }: FileDownloadProp) =
             worker.onerror = (e) => {
                 rej(e);
             };
+            worker.postMessage({ type: "init", data: import.meta.env.BASE_URL })
             worker.postMessage({ type: "startOpen", data: null });
 
             let completed = 0;
