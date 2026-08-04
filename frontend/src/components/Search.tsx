@@ -12,10 +12,9 @@ export const Search = ({ setCode }: SearchProp) => {
     const { showToast } = useToast();
     const navigate = useNavigate();
 
-    const onClick = () => {
+    const onSubmit = () => {
         let text = codeText.trim();
         navigate({
-            pathname: location.pathname,
             search: `?code=${text}`,
         });
     };
@@ -35,7 +34,7 @@ export const Search = ({ setCode }: SearchProp) => {
     }, [location]);
 
     return (
-        <div className="bg-surface-raised flex w-full items-center justify-center gap-3 p-5">
+        <form onSubmit={onSubmit} className="bg-surface-raised flex w-full items-center justify-center gap-3 p-5">
             <input
                 type="search"
                 inputMode="numeric"
@@ -44,12 +43,11 @@ export const Search = ({ setCode }: SearchProp) => {
                 className="border-border bg-surface text-accent focus:ring-accent-dim h-12 w-48 rounded-lg border text-center font-mono text-xl font-semibold tracking-[0.4em] transition outline-none focus:ring-2"
                 placeholder="000000"
             />
-            <button
-                onClick={onClick}
+            <input
+                type="submit"
+                value="Submit"
                 className="bg-accent text-void h-12 cursor-pointer rounded-lg border-0 px-5 text-sm font-semibold transition-opacity hover:opacity-90"
-            >
-                Download
-            </button>
-        </div>
+            />
+        </form>
     );
 };
