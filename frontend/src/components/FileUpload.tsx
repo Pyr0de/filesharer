@@ -6,10 +6,12 @@ import { useToast } from "../context/toast";
 import { Link } from "react-router-dom";
 
 interface FileUploaderProps {
+    totalSize: number;
+    maxSize: number;
     onSizeChange: (size: number) => void;
 }
 
-export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
+export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderProps) => {
     const [files, setFiles] = useState<File[]>([]);
     const [code, setCode] = useState("");
     const { showToast } = useToast();
@@ -44,6 +46,10 @@ export const FileUploader = ({ onSizeChange }: FileUploaderProps) => {
         if (files.length < 1) {
             showToast("No files selected", "error", 3000);
             return;
+        }
+        if (totalSize >= maxSize) {
+            showToast(`Total size of files is more than ${bytesToLargestUnit(maxSize)}`, "error", 3000)
+            return
         }
         const tarballPromise: Promise<Uint8Array> = new Promise((res, rej) => {
             const worker = new Worker(new URL("../services/tarballWorker.ts", import.meta.url));

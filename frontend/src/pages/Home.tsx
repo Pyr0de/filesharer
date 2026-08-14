@@ -15,7 +15,11 @@ export const HomePage = () => {
                 rightLabel={`${bytesToLargestUnit(maxSize)}`}
                 percentage={totalSize / 10485760}
             />
-            <FileUploader onSizeChange={setTotalSize} />
+            <FileUploader 
+            totalSize={totalSize}
+            maxSize={maxSize}
+            onSizeChange={setTotalSize}
+            />
         </>
     );
 };
