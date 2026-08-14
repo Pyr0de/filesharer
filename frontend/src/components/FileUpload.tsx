@@ -48,8 +48,12 @@ export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderP
             return;
         }
         if (totalSize >= maxSize) {
-            showToast(`Total size of files is more than ${bytesToLargestUnit(maxSize)}`, "error", 3000)
-            return
+            showToast(
+                `Total size of files is more than ${bytesToLargestUnit(maxSize)}`,
+                "error",
+                3000,
+            );
+            return;
         }
         const tarballPromise: Promise<Uint8Array> = new Promise((res, rej) => {
             const worker = new Worker(new URL("../services/tarballWorker.ts", import.meta.url));
@@ -60,7 +64,7 @@ export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderP
             worker.onerror = (e) => {
                 rej(e);
             };
-            worker.postMessage({ type: "init", data: import.meta.env.BASE_URL })
+            worker.postMessage({ type: "init", data: import.meta.env.BASE_URL });
             worker.postMessage({ type: "create", data: files });
         });
         showToast("Processing", "info", 3000);
@@ -88,7 +92,7 @@ export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderP
                     <Link
                         to={{
                             pathname: "download",
-                            search: `?code=${code}`
+                            search: `?code=${code}`,
                         }}
                         className="text-link font-mono"
                     >

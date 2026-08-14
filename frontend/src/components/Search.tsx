@@ -34,7 +34,10 @@ export const Search = ({ setCode }: SearchProp) => {
     }, [location]);
 
     return (
-        <form onSubmit={onSubmit} className="bg-surface-raised flex w-full items-center justify-center gap-3 p-5">
+        <form
+            onSubmit={onSubmit}
+            className="bg-surface-raised flex w-full items-center justify-center gap-3 p-5"
+        >
             <input
                 type="search"
                 inputMode="numeric"

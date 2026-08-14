@@ -20,7 +20,7 @@ func startOpenTarball(this js.Value, args []js.Value) any {
 		g, err := gzip.NewReader(pr)
 		if err != nil {
 			//rej.Invoke(err.Error())
-			return 
+			return
 		}
 		defer g.Close()
 
@@ -65,7 +65,7 @@ func feedOpenTarball(this js.Value, args []js.Value) any {
 	uint8Array := args[0]
 
 	body := make([]byte, uint8Array.Get("length").Int())
-	
+
 	js.CopyBytesToGo(body, uint8Array)
 	go func() {
 		pw.Write(body)
@@ -78,7 +78,7 @@ func closeOpenTarball(this js.Value, args []js.Value) any {
 	if len(args) > 0 {
 		err := errors.New(args[0].String())
 		pw.CloseWithError(err)
-	}else {
+	} else {
 		pw.Close()
 	}
 	return nil
