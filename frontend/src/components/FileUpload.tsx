@@ -4,6 +4,7 @@ import { createFileshare, uploadFile } from "../services/api";
 import { bytesToLargestUnit } from "../utils/utils";
 import { useToast } from "../context/toast";
 import { Link } from "react-router-dom";
+import { Button } from "./Button";
 
 interface FileUploaderProps {
     totalSize: number;
@@ -133,12 +134,9 @@ export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderP
                 />
             </div>
 
-            <button
-                onClick={() => uploadFiles()}
-                className="bg-accent text-void mt-4 cursor-pointer rounded-lg border-0 px-4 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
-            >
+            <Button className="mt-4" onClick={() => uploadFiles()}>
                 Done
-            </button>
+            </Button>
         </div>
     );
 };

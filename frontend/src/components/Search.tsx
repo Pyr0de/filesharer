@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "../context/toast";
+import { Button } from "./Button";
 
 interface SearchProp {
     setCode: (code: number) => void;
@@ -46,11 +47,7 @@ export const Search = ({ setCode }: SearchProp) => {
                 className="border-border bg-surface text-accent focus:ring-accent-dim h-12 w-48 rounded-lg border text-center font-mono text-xl font-semibold tracking-[0.4em] transition outline-none focus:ring-2"
                 placeholder="000000"
             />
-            <input
-                type="submit"
-                value="Submit"
-                className="bg-accent text-void h-12 cursor-pointer rounded-lg border-0 px-5 text-sm font-semibold transition-opacity hover:opacity-90"
-            />
+            <Button type="submit">Submit</Button>
         </form>
     );
 };
