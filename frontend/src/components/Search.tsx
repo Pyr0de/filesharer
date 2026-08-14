@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "../context/toast";
 import { Button } from "./Button";
+import { InputBar } from "./InputBar";
 
 interface SearchProp {
     setCode: (code: number) => void;
@@ -39,12 +40,12 @@ export const Search = ({ setCode }: SearchProp) => {
             onSubmit={onSubmit}
             className="bg-surface-raised flex w-full items-center justify-center gap-3 p-5"
         >
-            <input
+            <InputBar
                 type="search"
                 inputMode="numeric"
                 value={codeText}
                 onChange={(e) => setCodeText(e.target.value)}
-                className="border-border bg-surface text-accent focus:ring-accent-dim h-12 w-48 rounded-lg border text-center font-mono text-xl font-semibold tracking-[0.4em] transition outline-none focus:ring-2"
+                className="h-12 w-48 text-center font-mono text-xl tracking-[0.4em]"
                 placeholder="000000"
             />
             <Button type="submit">Submit</Button>
