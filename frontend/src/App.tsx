@@ -3,16 +3,20 @@ import "./App.css";
 import { HomePage } from "./pages/Home";
 import { DownloadPage } from "./pages/Download";
 import { Header } from "./components/Header";
+import { LoginPage } from "./pages/Login";
 
 export default function App() {
     return (
         <HashRouter>
-            <Header />
-            <Routes>
-                <Route path="/*" element={<p>404 Page not found</p>} />
-                <Route path="/" element={<HomePage />} />
-                <Route path="/download" element={<DownloadPage />} />
-            </Routes>
+            <section className="flex h-[100vh] flex-col">
+                <Header />
+                <Routes>
+                    <Route path="/*" element={<p>404 Page not found</p>} />
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/download" element={<DownloadPage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                </Routes>
+            </section>
         </HashRouter>
     );
 }
