@@ -48,7 +48,7 @@ func addFileToTarball(t *tar.Writer, file File) {
 }
 
 func createTarballHelper(this js.Value, args []js.Value) any {
-	if len(args) != 1{
+	if len(args) != 1 {
 		log.Printf("Error: Expected 1 argument: [File], found %d arguemnts", len(args))
 		return nil
 	}
@@ -100,4 +100,3 @@ func createTarballHelper(this js.Value, args []js.Value) any {
 	return promise.New(handler)
 
 }
-

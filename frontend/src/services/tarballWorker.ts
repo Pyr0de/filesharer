@@ -42,17 +42,17 @@ globalThis.onFilesReady = (files: File[]) => {
     return null;
 };
 
-let init: Promise<void>
+let init: Promise<void>;
 
 onmessage = async (event: MessageEvent<Message>) => {
     if (event.data.type === "init") {
-        init = initWasm(event.data.data as string)
+        init = initWasm(event.data.data as string);
 
-        return
+        return;
     }
 
     if (init == null) {
-        return
+        return;
     }
 
     await init;
