@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useRef, useState } from "react";
-import type { Toast, ToastTypes } from "../types/toast";
+import type { ToastData, ToastTypes } from "../types/toast";
 import ToastContainer from "../components/ToastContainer";
 
 type ToastContextType = {
@@ -9,7 +9,7 @@ type ToastContextType = {
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
-    const [toasts, setToasts] = useState<Toast[]>([]);
+    const [toasts, setToasts] = useState<ToastData[]>([]);
     const currentId = useRef(0);
 
     const showToast = (message: string, type: ToastTypes = "info", duration: number = 3000) => {
