@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"mime"
@@ -19,6 +20,25 @@ func CreateResponse(status int, error_message any) events.APIGatewayProxyRespons
 		},
 		Body:       fmt.Sprint(error_message),
 		StatusCode: status,
+	}
+}
+
+func CreateResponseJSON(status int, message string, code string) events.APIGatewayProxyResponse {
+	data := map[string]string {
+		"message": message,
+		"code": code,
+	}
+	body, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+
+	return events.APIGatewayProxyResponse{
+		StatusCode: status,
+		Headers: map[string]string {
+			"Content-Type": "application/json",
+		},
+		Body: string(body),
 	}
 }
 
