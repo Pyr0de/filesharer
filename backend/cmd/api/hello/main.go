@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var greeting string
 	sourceIP := request.RequestContext.Identity.SourceIP
@@ -21,7 +20,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	return events.APIGatewayProxyResponse{
-		Headers: map[string]string {
+		Headers: map[string]string{
 			"Content-Type": "text/plain",
 		},
 		Body:       greeting,

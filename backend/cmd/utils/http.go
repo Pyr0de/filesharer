@@ -14,10 +14,10 @@ import (
 
 func CreateResponse(status int, error_message any) events.APIGatewayProxyResponse {
 	return events.APIGatewayProxyResponse{
-		Headers: map[string]string {
+		Headers: map[string]string{
 			"Content-Type": "text/plain",
 		},
-		Body: fmt.Sprint(error_message),
+		Body:       fmt.Sprint(error_message),
 		StatusCode: status,
 	}
 }
@@ -33,7 +33,7 @@ func CreateMultipart(request events.APIGatewayProxyRequest) (*multipart.Reader, 
 		body = string(decodedBody)
 	}
 
-	contentType, ok := request.Headers["content-type"];
+	contentType, ok := request.Headers["content-type"]
 	if !ok {
 		return nil, errors.New("Content-Type not defined")
 	}
@@ -61,4 +61,3 @@ func NormalizeHeaders(headers map[string]string) map[string]string {
 
 	return normalized
 }
-

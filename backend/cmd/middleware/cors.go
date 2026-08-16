@@ -5,10 +5,11 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 )
-type ApiGatewayProxyHandler func (
-		context.Context,
-		events.APIGatewayProxyRequest,
-	) (events.APIGatewayProxyResponse, error)
+
+type ApiGatewayProxyHandler func(
+	context.Context,
+	events.APIGatewayProxyRequest,
+) (events.APIGatewayProxyResponse, error)
 
 func CorsMiddleware(next ApiGatewayProxyHandler) ApiGatewayProxyHandler {
 	return func(ctx context.Context, e events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {

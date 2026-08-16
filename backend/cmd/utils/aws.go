@@ -21,19 +21,19 @@ type FileMetadata struct {
 }
 
 type S3Client struct {
-	Client *s3.Client
+	Client        *s3.Client
 	PresignClient *s3.PresignClient
-	Id *string
+	Id            *string
 }
 
 type DynamoDBClient struct {
 	Client *dynamodb.Client
-	Id *string
+	Id     *string
 }
 
 type KMSClient struct {
 	Client *kms.Client
-	Id *string
+	Id     *string
 }
 
 func getEnv(env_name string) (*string, error) {
@@ -44,7 +44,7 @@ func getEnv(env_name string) (*string, error) {
 	return aws.String(name), nil
 }
 
-func ConnectS3(context context.Context) (*S3Client, error){
+func ConnectS3(context context.Context) (*S3Client, error) {
 	env_name := "FILESTORES3_BUCKET_NAME"
 	name, err := getEnv(env_name)
 	if err != nil {
@@ -59,12 +59,12 @@ func ConnectS3(context context.Context) (*S3Client, error){
 	client := s3.NewFromConfig(cfg)
 
 	return &S3Client{
-		Client: client,
+		Client:        client,
 		PresignClient: s3.NewPresignClient(client),
-		Id: name,
+		Id:            name,
 	}, nil
 }
-func ConnectTempS3(context context.Context) (*S3Client, error){
+func ConnectTempS3(context context.Context) (*S3Client, error) {
 	env_name := "TEMPFILESTORES3_BUCKET_NAME"
 	name, err := getEnv(env_name)
 	if err != nil {
@@ -79,13 +79,13 @@ func ConnectTempS3(context context.Context) (*S3Client, error){
 	client := s3.NewFromConfig(cfg)
 
 	return &S3Client{
-		Client: client,
+		Client:        client,
 		PresignClient: s3.NewPresignClient(client),
-		Id: name,
+		Id:            name,
 	}, nil
 }
 
-func ConnectMetadataStore(context context.Context) (*DynamoDBClient ,error) {
+func ConnectMetadataStore(context context.Context) (*DynamoDBClient, error) {
 	env_name := "METADATA_STORE_NAME"
 	name, err := getEnv(env_name)
 	if err != nil {
@@ -98,7 +98,7 @@ func ConnectMetadataStore(context context.Context) (*DynamoDBClient ,error) {
 
 	return &DynamoDBClient{
 		Client: dynamodb.NewFromConfig(cfg),
-		Id: name,
+		Id:     name,
 	}, nil
 }
 
@@ -115,6 +115,6 @@ func ConnectDataEncryptionKMS(context context.Context) (*KMSClient, error) {
 
 	return &KMSClient{
 		Client: kms.NewFromConfig(cfg),
-		Id: name,
+		Id:     name,
 	}, nil
 }

@@ -20,15 +20,15 @@ func Handler(context context.Context, request events.APIGatewayProxyRequest) (ev
 		return utils.CreateResponse(400, "Invalid fileshare id"), nil
 	}
 
-    s3client, err := utils.ConnectS3(context)
-    if err != nil {
-        return events.APIGatewayProxyResponse{}, err
-    }
+	s3client, err := utils.ConnectS3(context)
+	if err != nil {
+		return events.APIGatewayProxyResponse{}, err
+	}
 
-    url, err := s3client.PresignClient.PresignGetObject(context, &s3.GetObjectInput{
-        Bucket: s3client.Id,
-        Key: aws.String(id),
-    })
+	url, err := s3client.PresignClient.PresignGetObject(context, &s3.GetObjectInput{
+		Bucket: s3client.Id,
+		Key:    aws.String(id),
+	})
 
 	return utils.CreateResponse(200, url.URL), nil
 }
