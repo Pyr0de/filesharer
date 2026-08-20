@@ -118,6 +118,26 @@ Resources:
       Environment:
         Variables:
           USER_STORE_NAME: !Ref UserStore
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: go1.x
+    Properties:
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref UserStore
+      CodeUri: cmd/api/login
+      Handler: bootstrap
+      Runtime: provided.al2023
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /login/
+            Method: POST
+      Environment:
+        Variables:
+          USER_STORE_NAME: !Ref UserStore
 Outputs:
   ApiUrl:
     Description: API URL
