@@ -4,16 +4,26 @@ import { FormContainer } from "../components/FormContainer";
 import { InputBar } from "../components/InputBar";
 import { Link } from "react-router-dom";
 import { Toast } from "../components/Toast";
+import { signup } from "../services/api";
 
 export const SignupPage = () => {
     const [status, setStatus] = useState("");
-    const onLogin: SubmitEventHandler = (e) => {
+    const onLogin: SubmitEventHandler = async (e) => {
         e.preventDefault();
         setStatus("");
 
-        if (e.target.password.value != e.target.confirm.value) {
+        let formData = new FormData(e.target as HTMLFormElement);
+
+        let username = formData.get("username") as string;
+        let password = formData.get("password") as string;
+        let retype = formData.get("confirm") as string;
+
+        if (password !== retype) {
             setStatus("Passwords do not match");
+            return;
         }
+
+        let user = await signup(username, password);
     };
 
     return (
@@ -26,8 +36,8 @@ export const SignupPage = () => {
                 />
             )}
             <div>
-                <p>Email</p>
-                <InputBar type="email" className="w-[100%]" name="email" />
+                <p>Username</p>
+                <InputBar type="text" className="w-[100%]" name="username" />
             </div>
             <div>
                 <p>Password</p>

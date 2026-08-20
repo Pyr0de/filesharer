@@ -1,3 +1,5 @@
+import type { User } from "./user";
+
 const API_URL = `${import.meta.env.VITE_API_URL}/Prod/`;
 
 export async function createFileshare(): Promise<{
@@ -39,4 +41,22 @@ export async function getFile(code: number): Promise<Response> {
     }
 
     return s3_req;
+}
+
+export async function signup(username: string, password: string): Promise<User> {
+    const creds = {
+        username: username,
+        password: password,
+    };
+
+    const req = await fetch(`${API_URL}/signup`, {
+        method: "POST",
+        body: JSON.stringify(creds),
+    });
+
+    const json = await req.json();
+    if (!req.ok) {
+        throw new Error(json);
+    }
+    return json;
 }
