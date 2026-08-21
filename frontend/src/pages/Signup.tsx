@@ -5,9 +5,12 @@ import { InputBar } from "../components/InputBar";
 import { Link } from "react-router-dom";
 import { Toast } from "../components/Toast";
 import { signup } from "../services/api";
+import { useAuth } from "../context/auth";
 
 export const SignupPage = () => {
     const [status, setStatus] = useState("");
+    const { login } = useAuth();
+
     const onLogin: SubmitEventHandler = async (e) => {
         e.preventDefault();
         setStatus("");
@@ -24,6 +27,7 @@ export const SignupPage = () => {
         }
 
         let user = await signup(username, password);
+        login(user);
     };
 
     return (

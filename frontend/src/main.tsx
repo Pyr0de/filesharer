@@ -5,11 +5,14 @@ import "@fontsource/space-grotesk";
 import "@fontsource/inter";
 import App from "./App.tsx";
 import { ToastProvider } from "./context/toast.tsx";
+import { AuthProvider } from "./context/auth.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <ToastProvider>
-            <App />
+            <AuthProvider>
+                <App />
+            </AuthProvider>
         </ToastProvider>
     </StrictMode>,
 );
