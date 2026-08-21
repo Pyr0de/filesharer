@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-import { setStorageUser, type User } from "../services/user";
+import { getStorageUser, setStorageUser, type User } from "../services/user";
 import { useToast } from "./toast";
 
 export interface AuthContextType {
@@ -17,7 +17,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User | null>(getStorageUser());
     const { showToast } = useToast();
 
     const login = (user: User) => {
