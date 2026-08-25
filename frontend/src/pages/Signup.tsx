@@ -61,8 +61,14 @@ export const SignupPage = () => {
             setStatus("Passwords do not match");
             return;
         }
-        let user = await signupAPI(username, password);
-        login(user);
+        let response = await signupAPI(username, password);
+
+        if ("code" in response) {
+            setStatus(response.message)
+            return
+        }
+        login(response)
+
     };
 
     return (

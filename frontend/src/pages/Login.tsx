@@ -51,8 +51,12 @@ export const LoginPage = () => {
             return;
         }
 
-        let user = await loginAPI(username as string, password as string);
-        login(user);
+        let response = await loginAPI(username as string, password as string);
+        if ("code" in response) {
+            setStatus(response.message)
+            return
+        }
+        login(response);
     };
 
     return (

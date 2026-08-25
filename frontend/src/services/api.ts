@@ -1,5 +1,10 @@
 import type { User } from "./user";
 
+export interface APIError {
+    code: string,
+    message: string
+}
+
 const API_URL = `${import.meta.env.VITE_API_URL}/Prod/`;
 
 export async function createFileshare(): Promise<{
@@ -43,7 +48,7 @@ export async function getFile(code: number): Promise<Response> {
     return s3_req;
 }
 
-export async function signupAPI(username: string, password: string): Promise<User> {
+export async function signupAPI(username: string, password: string): Promise<User | APIError> {
     const creds = {
         username: username,
         password: password,
@@ -56,12 +61,12 @@ export async function signupAPI(username: string, password: string): Promise<Use
 
     const json = await req.json();
     if (!req.ok) {
-        throw new Error(json);
+        return json as APIError
     }
     return json;
 }
 
-export async function loginAPI(username: string, password: string): Promise<User> {
+export async function loginAPI(username: string, password: string): Promise<User | APIError> {
     const creds = {
         username: username,
         password: password,
@@ -74,7 +79,7 @@ export async function loginAPI(username: string, password: string): Promise<User
 
     const json = await req.json();
     if (!req.ok) {
-        throw new Error(json);
+        return json as APIError
     }
     return json;
 }
