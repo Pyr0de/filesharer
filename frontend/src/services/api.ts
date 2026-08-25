@@ -43,7 +43,7 @@ export async function getFile(code: number): Promise<Response> {
     return s3_req;
 }
 
-export async function signup(username: string, password: string): Promise<User> {
+export async function signupAPI(username: string, password: string): Promise<User> {
     const creds = {
         username: username,
         password: password,

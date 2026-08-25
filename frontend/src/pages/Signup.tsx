@@ -4,11 +4,16 @@ import { FormContainer } from "../components/FormContainer";
 import { InputBar } from "../components/InputBar";
 import { Link } from "react-router-dom";
 import { Toast } from "../components/Toast";
-import { signup } from "../services/api";
+import { signupAPI } from "../services/api";
 import { useAuth } from "../context/auth";
+
+const USERNAME = "username"
+const PASSWORD = "password"
+const CONFIRM = "confirm"
 
 export const SignupPage = () => {
     const [status, setStatus] = useState("");
+    const [errorFields, setErrorFields] = useState<Set<string>>(new Set([]))
     const { login } = useAuth();
 
     const onLogin: SubmitEventHandler = async (e) => {
@@ -17,16 +22,46 @@ export const SignupPage = () => {
 
         let formData = new FormData(e.target as HTMLFormElement);
 
-        let username = formData.get("username") as string;
-        let password = formData.get("password") as string;
-        let retype = formData.get("confirm") as string;
+        let username = formData.get(USERNAME) as string;
+        let password = formData.get(PASSWORD) as string;
+        let confirm = formData.get(CONFIRM) as string;
 
-        if (password !== retype) {
-            setStatus("Passwords do not match");
+        const error = (key: string) => {
+            setErrorFields(prev => {
+                const next = new Set(prev)
+                next.add(key)
+                return next
+            })
+
+            setTimeout(() => {
+                setErrorFields(prev => {
+                    const next = new Set(prev)
+                    next.delete(key)
+                    return next
+                })
+            }, 3000)
+        }
+
+        if (!username) {
+            error(USERNAME)
+        }
+        if (!password) {
+            error(PASSWORD)
+        }
+        if (!confirm) {
+            error(CONFIRM)
+        }
+
+        if (!username || !password || !confirm) {
+            setStatus("All fields are required")
             return;
         }
 
-        let user = await signup(username, password);
+        if (password !== confirm) {
+            setStatus("Passwords do not match");
+            return;
+        }
+        let user = await signupAPI(username, password);
         login(user);
     };
 
@@ -41,15 +76,15 @@ export const SignupPage = () => {
             )}
             <div>
                 <p>Username</p>
-                <InputBar type="text" className="w-[100%]" name="username" />
+                <InputBar type="text" className={`w-[100%] ${errorFields.has(USERNAME) ? "border-danger" : ""}`} name={USERNAME} />
             </div>
             <div>
                 <p>Password</p>
-                <InputBar type="password" className="w-[100%]" name="password" />
+                <InputBar type="password" className={`w-[100%] ${errorFields.has(PASSWORD) ? "border-danger" : ""}`} name={PASSWORD} />
             </div>
             <div>
                 <p>Confirm Password</p>
-                <InputBar type="password" className="w-[100%]" name="confirm" />
+                <InputBar type="password" className={`w-[100%] ${errorFields.has(CONFIRM) ? "border-danger" : ""}`} name={CONFIRM} />
             </div>
             <Button type="submit" className="mt-3">
                 Create Account
