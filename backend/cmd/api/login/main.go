@@ -17,9 +17,13 @@ import (
 )
 
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	var creds utils.Credentials;
+	var creds utils.Credentials
 	if err := json.Unmarshal([]byte(request.Body), &creds); err != nil {
 		return utils.CreateResponseJSON(400, "Malformed JSON", "JSON_ERR"), err
+	}
+
+	if creds.Password == "" || creds.Username == "" {
+		return utils.CreateResponseJSON(400, "Username and Password cannot be empty", "JSON_ERR"), nil
 	}
 
 	dynamoClient, err := utils.ConnectUserStore(ctx)
@@ -32,8 +36,8 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	response, err := dynamoClient.Client.Query(ctx, &dynamodb.QueryInput{
-		TableName: dynamoClient.Id,
-		IndexName: aws.String("UsernameIndex"),
+		TableName:              dynamoClient.Id,
+		IndexName:              aws.String("UsernameIndex"),
 		KeyConditionExpression: aws.String("username = :username"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
 			":username": &username,
@@ -48,7 +52,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	}
 
 	var users []utils.User
-	
+
 	err = attributevalue.UnmarshalListOfMaps(response.Items, &users)
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err

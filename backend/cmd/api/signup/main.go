@@ -24,6 +24,10 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		return utils.CreateResponseJSON(400, "Malformed JSON", "JSON_ERR"), err
 	}
 
+	if creds.Password == "" || creds.Username == "" {
+		return utils.CreateResponseJSON(400, "Username and Password cannot be empty", "JSON_ERR"), nil
+	}
+
 	dynamoClient, err := utils.ConnectUserStore(ctx)
 	if err != nil {
 		return events.APIGatewayProxyResponse{}, err
