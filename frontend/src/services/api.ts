@@ -60,3 +60,21 @@ export async function signup(username: string, password: string): Promise<User> 
     }
     return json;
 }
+
+export async function loginAPI(username: string, password: string): Promise<User> {
+    const creds = {
+        username: username,
+        password: password,
+    };
+
+    const req = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        body: JSON.stringify(creds),
+    });
+
+    const json = await req.json();
+    if (!req.ok) {
+        throw new Error(json);
+    }
+    return json;
+}

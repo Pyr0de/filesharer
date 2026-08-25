@@ -4,11 +4,24 @@ import { FormContainer } from "../components/FormContainer";
 import { InputBar } from "../components/InputBar";
 import { Link } from "react-router-dom";
 import { Toast } from "../components/Toast";
+import { useAuth } from "../context/auth";
+import { loginAPI } from "../services/api";
 
 export const LoginPage = () => {
     const [status, setStatus] = useState("");
-    const onLogin: SubmitEventHandler = (e) => {
+    const { login } = useAuth();
+
+    const onLogin: SubmitEventHandler = async (e) => {
         e.preventDefault();
+        setStatus("");
+
+        let formData = new FormData(e.target as HTMLFormElement);
+
+        let username = formData.get("username") as string;
+        let password = formData.get("password") as string;
+
+        let user = await loginAPI(username, password);
+        login(user);
     };
 
     return (
@@ -21,12 +34,12 @@ export const LoginPage = () => {
                 />
             )}
             <div>
-                <p>Email</p>
-                <InputBar type="email" className="w-[100%]" />
+                <p>Username</p>
+                <InputBar type="text" className="w-[100%]" name="username" />
             </div>
             <div>
                 <p>Password</p>
-                <InputBar type="password" className="w-[100%]" />
+                <InputBar type="password" className="w-[100%]" name="password" />
             </div>
             <Button type="submit" className="mt-3">
                 Login
