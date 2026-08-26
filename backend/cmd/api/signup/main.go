@@ -37,6 +37,19 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		Value: creds.Username,
 	}
 
+	errChan := make(chan error)
+	hashChan := make(chan []byte)
+
+	go func() {
+		hash, err := bcrypt.GenerateFromPassword([]byte(creds.Password), bcrypt.DefaultCost)
+		if err != nil {
+			errChan <- err
+			return
+		}
+		errChan <- nil
+		hashChan <- hash
+	}()
+
 	response, err := dynamoClient.Client.Query(ctx, &dynamodb.QueryInput{
 		TableName:              dynamoClient.Id,
 		IndexName:              aws.String("UsernameIndex"),
@@ -52,16 +65,15 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 	if len(response.Items) != 0 {
 		return utils.CreateResponseJSON(409, "Username already taken", "UNAME_TAKEN"), nil
 	}
-
-	hash, err := bcrypt.GenerateFromPassword([]byte(creds.Password), bcrypt.DefaultCost)
-	if err != nil {
+	
+	if err := <-errChan; err != nil {
 		return events.APIGatewayProxyResponse{}, err
 	}
 
 	user := utils.User{
 		UserId:       uuid.New().String(),
 		Username:     creds.Username,
-		PasswordHash: string(hash),
+		PasswordHash: string(<-hashChan),
 		CreatedAt:    time.Now().String(),
 	}
 

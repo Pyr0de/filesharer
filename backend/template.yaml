@@ -109,6 +109,7 @@ Resources:
       CodeUri: cmd/api/signup
       Handler: bootstrap
       Runtime: provided.al2023
+      MemorySize: 3008
       Events:
         CatchAll:
           Type: Api
@@ -129,6 +130,7 @@ Resources:
       CodeUri: cmd/api/login
       Handler: bootstrap
       Runtime: provided.al2023
+      MemorySize: 3008
       Events:
         CatchAll:
           Type: Api
