@@ -7,13 +7,13 @@ import { Toast } from "../components/Toast";
 import { signupAPI } from "../services/api";
 import { useAuth } from "../context/auth";
 
-const USERNAME = "username"
-const PASSWORD = "password"
-const CONFIRM = "confirm"
+const USERNAME = "username";
+const PASSWORD = "password";
+const CONFIRM = "confirm";
 
 export const SignupPage = () => {
     const [status, setStatus] = useState("");
-    const [errorFields, setErrorFields] = useState<Set<string>>(new Set([]))
+    const [errorFields, setErrorFields] = useState<Set<string>>(new Set([]));
     const { login } = useAuth();
 
     const onLogin: SubmitEventHandler = async (e) => {
@@ -27,33 +27,33 @@ export const SignupPage = () => {
         let confirm = formData.get(CONFIRM) as string;
 
         const error = (key: string) => {
-            setErrorFields(prev => {
-                const next = new Set(prev)
-                next.add(key)
-                return next
-            })
+            setErrorFields((prev) => {
+                const next = new Set(prev);
+                next.add(key);
+                return next;
+            });
 
             setTimeout(() => {
-                setErrorFields(prev => {
-                    const next = new Set(prev)
-                    next.delete(key)
-                    return next
-                })
-            }, 3000)
-        }
+                setErrorFields((prev) => {
+                    const next = new Set(prev);
+                    next.delete(key);
+                    return next;
+                });
+            }, 3000);
+        };
 
         if (!username) {
-            error(USERNAME)
+            error(USERNAME);
         }
         if (!password) {
-            error(PASSWORD)
+            error(PASSWORD);
         }
         if (!confirm) {
-            error(CONFIRM)
+            error(CONFIRM);
         }
 
         if (!username || !password || !confirm) {
-            setStatus("All fields are required")
+            setStatus("All fields are required");
             return;
         }
 
@@ -64,11 +64,10 @@ export const SignupPage = () => {
         let response = await signupAPI(username, password);
 
         if ("code" in response) {
-            setStatus(response.message)
-            return
+            setStatus(response.message);
+            return;
         }
-        login(response)
-
+        login(response);
     };
 
     return (
@@ -82,15 +81,27 @@ export const SignupPage = () => {
             )}
             <div>
                 <p>Username</p>
-                <InputBar type="text" className={`w-[100%] ${errorFields.has(USERNAME) ? "border-danger" : ""}`} name={USERNAME} />
+                <InputBar
+                    type="text"
+                    className={`w-[100%] ${errorFields.has(USERNAME) ? "border-danger" : ""}`}
+                    name={USERNAME}
+                />
             </div>
             <div>
                 <p>Password</p>
-                <InputBar type="password" className={`w-[100%] ${errorFields.has(PASSWORD) ? "border-danger" : ""}`} name={PASSWORD} />
+                <InputBar
+                    type="password"
+                    className={`w-[100%] ${errorFields.has(PASSWORD) ? "border-danger" : ""}`}
+                    name={PASSWORD}
+                />
             </div>
             <div>
                 <p>Confirm Password</p>
-                <InputBar type="password" className={`w-[100%] ${errorFields.has(CONFIRM) ? "border-danger" : ""}`} name={CONFIRM} />
+                <InputBar
+                    type="password"
+                    className={`w-[100%] ${errorFields.has(CONFIRM) ? "border-danger" : ""}`}
+                    name={CONFIRM}
+                />
             </div>
             <Button type="submit" className="mt-3">
                 Create Account

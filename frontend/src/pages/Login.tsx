@@ -12,7 +12,7 @@ const PASSWORD = "password";
 
 export const LoginPage = () => {
     const [status, setStatus] = useState("");
-    const [errorFields, setErrorFields] = useState<Set<string>>(new Set([]))
+    const [errorFields, setErrorFields] = useState<Set<string>>(new Set([]));
     const { login } = useAuth();
 
     const onLogin: SubmitEventHandler = async (e) => {
@@ -25,25 +25,25 @@ export const LoginPage = () => {
         let password = formData.get(PASSWORD);
 
         const error = (key: string) => {
-            setErrorFields(prev => {
-                const next = new Set(prev)
-                next.add(key)
-                return next
-            })
+            setErrorFields((prev) => {
+                const next = new Set(prev);
+                next.add(key);
+                return next;
+            });
 
             setTimeout(() => {
-                setErrorFields(prev => {
-                    const next = new Set(prev)
-                    next.delete(key)
-                    return next
-                })
-            }, 3000)
-        }
+                setErrorFields((prev) => {
+                    const next = new Set(prev);
+                    next.delete(key);
+                    return next;
+                });
+            }, 3000);
+        };
         if (!username) {
-            error(USERNAME)
+            error(USERNAME);
         }
         if (!password) {
-            error(PASSWORD)
+            error(PASSWORD);
         }
 
         if (!username || !password) {
@@ -53,8 +53,8 @@ export const LoginPage = () => {
 
         let response = await loginAPI(username as string, password as string);
         if ("code" in response) {
-            setStatus(response.message)
-            return
+            setStatus(response.message);
+            return;
         }
         login(response);
     };

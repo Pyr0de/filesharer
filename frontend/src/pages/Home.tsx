@@ -6,7 +6,7 @@ import { useAuth } from "../context/auth";
 
 export const HomePage = () => {
     const [totalSize, setTotalSize] = useState(0);
-    const { user } = useAuth()
+    const { user } = useAuth();
 
     const maxSize = (user ? 50 : 10) * 1048576;
 

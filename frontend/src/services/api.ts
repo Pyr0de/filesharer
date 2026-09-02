@@ -1,8 +1,8 @@
 import type { User } from "./user";
 
 export interface APIError {
-    code: string,
-    message: string
+    code: string;
+    message: string;
 }
 
 const API_URL = `${import.meta.env.VITE_API_URL}/Prod/`;
@@ -61,7 +61,7 @@ export async function signupAPI(username: string, password: string): Promise<Use
 
     const json = await req.json();
     if (!req.ok) {
-        return json as APIError
+        return json as APIError;
     }
     return json;
 }
@@ -79,7 +79,7 @@ export async function loginAPI(username: string, password: string): Promise<User
 
     const json = await req.json();
     if (!req.ok) {
-        return json as APIError
+        return json as APIError;
     }
     return json;
 }
