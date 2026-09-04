@@ -69,10 +69,9 @@ export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderP
             worker.postMessage({ type: "create", data: files });
         });
         showToast("Processing", "info", 3000);
-        const done = await Promise.all([tarballPromise, createFileshare()]);
+        const data = await tarballPromise;
 
-        const data = done[0];
-        const fileshare_info = done[1];
+        const fileshare_info = await createFileshare(data.length);
 
         showToast(`Uploading`, "info", 3000);
 
