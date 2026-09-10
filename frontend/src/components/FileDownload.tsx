@@ -7,6 +7,7 @@ interface FileDownloadProp {
     code: number;
     setCode: (code: number) => void;
     setProgress: (progress: DownloadProgress) => void;
+    setAllowDownload: (allowDownload: boolean) => void;
 }
 
 export interface DownloadProgress {
@@ -14,7 +15,12 @@ export interface DownloadProgress {
     total: number;
 }
 
-export const FileDownload = ({ code, setCode, setProgress }: FileDownloadProp) => {
+export const FileDownload = ({
+    code,
+    setCode,
+    setProgress,
+    setAllowDownload,
+}: FileDownloadProp) => {
     const [files, setFiles] = useState<File[]>([]);
     const { showToast } = useToast();
     const lastPercent = useRef(-1);
@@ -28,6 +34,7 @@ export const FileDownload = ({ code, setCode, setProgress }: FileDownloadProp) =
             setCode(0);
             return;
         }
+        setAllowDownload(false);
         const tarballPromise: Promise<File[]> = new Promise(async (res, rej) => {
             const worker = new Worker(new URL("../services/tarballWorker.ts", import.meta.url));
             worker.onmessage = async (event: MessageEvent<File[]>) => {
@@ -63,6 +70,7 @@ export const FileDownload = ({ code, setCode, setProgress }: FileDownloadProp) =
         });
 
         setFiles(await tarballPromise);
+        setAllowDownload(true);
     };
 
     useEffect(() => {

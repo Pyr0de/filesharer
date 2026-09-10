@@ -5,10 +5,11 @@ import { Button } from "./Button";
 import { InputBar } from "./InputBar";
 
 interface SearchProp {
+    allowDownload: boolean;
     setCode: (code: number) => void;
 }
 
-export const Search = ({ setCode }: SearchProp) => {
+export const Search = ({ allowDownload, setCode }: SearchProp) => {
     const [codeText, setCodeText] = useState("");
     const location = useLocation();
     const { showToast } = useToast();
@@ -48,7 +49,13 @@ export const Search = ({ setCode }: SearchProp) => {
                 className="h-12 w-48 text-center font-mono text-xl tracking-[0.4em]"
                 placeholder="000000"
             />
-            <Button type="submit">Submit</Button>
+            <Button
+                type="submit"
+                disabled={!allowDownload}
+                className={`${!allowDownload ? "bg-muted" : ""}`}
+            >
+                Submit
+            </Button>
         </form>
     );
 };

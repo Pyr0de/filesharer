@@ -7,6 +7,7 @@ import { bytesToLargestUnit } from "../utils/utils";
 export const DownloadPage = () => {
     const [code, setCode] = useState<number>(0);
     const [progress, setProgress] = useState<DownloadProgress>();
+    const [allowDownload, setAllowDownload] = useState(true);
 
     return (
         <>
@@ -18,9 +19,14 @@ export const DownloadPage = () => {
                     percentage={progress.current / progress.total}
                 />
             )}
-            <FileDownload code={code} setCode={setCode} setProgress={setProgress} />
+            <FileDownload
+                code={code}
+                setCode={setCode}
+                setProgress={setProgress}
+                setAllowDownload={setAllowDownload}
+            />
 
-            <Search setCode={setCode} />
+            <Search allowDownload={allowDownload} setCode={setCode} />
         </>
     );
 };
