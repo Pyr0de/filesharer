@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { ToggleButton } from "./ToggleButton";
 import { useState, useEffect } from "react";
-import { AccountHeader } from "./AccountHeader";
 
 export function Header() {
     const stored_theme = localStorage.getItem("filesharer-theme");
@@ -45,7 +44,6 @@ export function Header() {
                 </NavLink>
             </nav>
             <ToggleButton className="mx-3 ml-auto" value={theme == "light"} setValue={onToggle} />
-            <AccountHeader className="gap-6 px-6 py-4" />
         </header>
     );
 }
