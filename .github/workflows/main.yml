@@ -21,7 +21,7 @@ jobs:
         run: npx prettier -c .
       - name: Check Typescript
         working-directory: ./frontend
-        run: npx tsc --noEmit
+        run: npx tsc -b
       - name: Check Go formatting
         working-directory: ./frontend/src/wasm
         run: gofmt -d .
