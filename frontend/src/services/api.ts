@@ -5,14 +5,17 @@ export interface APIError {
     message: string;
 }
 
-const API_URL = `${import.meta.env.VITE_API_URL}/Prod/`;
+const API_URL = `${import.meta.env.VITE_API_URL}/Prod`;
 
-export async function createFileshare(): Promise<{
+export async function createFileshare(size: number): Promise<{
     code: number;
     url: string;
 }> {
     const req = await fetch(`${API_URL}/create`, {
         method: "POST",
+        body: JSON.stringify({
+            size,
+        }),
     });
     const json = await req.json();
 

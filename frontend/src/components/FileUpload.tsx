@@ -15,6 +15,7 @@ interface FileUploaderProps {
 export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderProps) => {
     const [files, setFiles] = useState<File[]>([]);
     const [code, setCode] = useState("");
+    const [allowUpload, setAllowUpload] = useState(true);
     const { showToast } = useToast();
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +57,7 @@ export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderP
             );
             return;
         }
+        setAllowUpload(false);
         const tarballPromise: Promise<Uint8Array> = new Promise((res, rej) => {
             const worker = new Worker(new URL("../services/tarballWorker.ts", import.meta.url));
 
@@ -69,14 +71,14 @@ export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderP
             worker.postMessage({ type: "create", data: files });
         });
         showToast("Processing", "info", 3000);
-        const done = await Promise.all([tarballPromise, createFileshare()]);
+        const data = await tarballPromise;
 
-        const data = done[0];
-        const fileshare_info = done[1];
+        const fileshare_info = await createFileshare(data.length);
 
         showToast(`Uploading`, "info", 3000);
 
         uploadFile(fileshare_info.url, data).then(() => {
+            setAllowUpload(true);
             showToast(`Uploaded ${bytesToLargestUnit(data.length)}`, "success", 3000);
         });
         setFiles([]);
@@ -97,7 +99,7 @@ export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderP
                         }}
                         className="text-link font-mono"
                     >
-                        {code}
+                        <u>{code}</u>
                     </Link>
                 </div>
             )}
@@ -134,7 +136,11 @@ export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderP
                 />
             </div>
 
-            <Button className="mt-4" onClick={() => uploadFiles()}>
+            <Button
+                className={`mt-4 ${!allowUpload ? "bg-muted" : ""}`}
+                onClick={() => uploadFiles()}
+                disabled={!allowUpload}
+            >
                 Done
             </Button>
         </div>
