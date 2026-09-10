@@ -23,7 +23,7 @@ Resources:
       LifecycleConfiguration:
         Rules:
           - Status: Enabled
-            ExpirationInDays: 7
+            ExpirationInDays: 1
   UserStore:
     Type: AWS::DynamoDB::Table
     Properties:

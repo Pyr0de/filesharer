@@ -18,6 +18,9 @@ export const HomePage = () => {
                 rightLabel={`${bytesToLargestUnit(maxSize)}`}
                 percentage={totalSize / maxSize}
             />
+            <p className="text-accent font-body px-8 text-xs">
+                The uploaded files will be deleted in 1 day
+            </p>
             <FileUploader totalSize={totalSize} maxSize={maxSize} onSizeChange={setTotalSize} />
         </>
     );

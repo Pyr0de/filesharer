@@ -99,7 +99,7 @@ export const FileUploader = ({ totalSize, maxSize, onSizeChange }: FileUploaderP
                         }}
                         className="text-link font-mono"
                     >
-                        {code}
+                        <u>{code}</u>
                     </Link>
                 </div>
             )}
